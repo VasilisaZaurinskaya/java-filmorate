@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import repository.IdGenerator;
 
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -38,7 +38,13 @@ public class FilmController {
     }
 
     private void validateNewFilm(Film film) throws ValidateException {
-        if (film.getName() == null)throw new ValidateException("Название фильма пустое");
+        if (film.getName() == null) throw new ValidateException("Название фильма пустое");
+        if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28)))
+            throw new ValidateException("Дата релиза не может быть раньше 28 декабря 1895 года");
+        if (film.getDescription().length() > 200)
+            throw new ValidateException("Описание не должно превышать 200 символов");
+        if (film.getDuration().toMillis() > 0)
+            throw new ValidateException("Продолжительность фильма должна быть положительной");
 
     }
 
