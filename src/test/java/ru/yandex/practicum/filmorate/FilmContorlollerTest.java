@@ -1,8 +1,8 @@
 package ru.yandex.practicum.filmorate;
 
-import controller.FilmController;
-import exception.ValidateException;
-import model.Film;
+import ru.yandex.practicum.filmorate.controller.FilmController;
+import ru.yandex.practicum.filmorate.exception.ValidateException;
+import ru.yandex.practicum.filmorate.model.Film;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -14,7 +14,7 @@ public class FilmContorlollerTest {
         Film film = new Film();
         film.setName("Звёздные войны: Эпизод 1 - Скрытая угроза");
         film.setDescription("Мирная и процветающая планета Набу. Торговая федерация, не желая платить налоги, вступает в прямой конфликт с королевой Амидалой.");
-        film.setDuration(Duration.ofMinutes(136));
+        film.setDuration(136);
         film.setReleaseDate(LocalDate.of(1999, 05, 04));
         return film;
     }
@@ -28,6 +28,7 @@ public class FilmContorlollerTest {
 
         try {
             filmController.validateNewFilm(film);
+            Assertions.assertEquals(true, false);
         } catch (ValidateException e) {
             Assertions.assertEquals("Описание не должно превышать 200 символов", e.getMessage());
         }
@@ -41,9 +42,17 @@ public class FilmContorlollerTest {
         Film film = getDefaultFilm();
         film.setName(null);
 
-
         try {
             filmController.validateNewFilm(film);
+            Assertions.assertEquals(true, false);
+        } catch (ValidateException e) {
+            Assertions.assertEquals("Название фильма не может быть пустым", e.getMessage());
+        }
+
+        film.setName("");
+        try {
+            filmController.validateNewFilm(film);
+            Assertions.assertEquals(true, false);
         } catch (ValidateException e) {
             Assertions.assertEquals("Название фильма не может быть пустым", e.getMessage());
         }
@@ -55,10 +64,11 @@ public class FilmContorlollerTest {
         FilmController filmController = new FilmController();
 
         Film film = getDefaultFilm();
-        film.setDuration(Duration.ofMinutes(-100));
+        film.setDuration(-100);
 
         try {
             filmController.validateNewFilm(film);
+            Assertions.assertEquals(true, false);
         } catch (ValidateException e) {
             Assertions.assertEquals("Продолжительность фильма должна быть положительной", e.getMessage());
         }
@@ -73,6 +83,7 @@ public class FilmContorlollerTest {
         film.setReleaseDate(LocalDate.of(1894, 10, 04));
         try {
             filmController.validateNewFilm(film);
+            Assertions.assertEquals(true, false);
         } catch (ValidateException e) {
             Assertions.assertEquals("Дата релиза не может быть раньше 28 декабря 1895 года", e.getMessage());
         }

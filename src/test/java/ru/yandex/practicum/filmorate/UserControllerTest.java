@@ -1,10 +1,10 @@
 package ru.yandex.practicum.filmorate;
 
 
-import controller.UserController;
-import exception.ValidateException;
+import ru.yandex.practicum.filmorate.controller.UserController;
+import ru.yandex.practicum.filmorate.exception.ValidateException;
 
-import model.User;
+import ru.yandex.practicum.filmorate.model.User;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,6 +24,7 @@ class UserControllerTest {
 
         try {
             userController.validateNewUser(user);
+            Assertions.assertEquals(true, false);
         } catch (ValidateException e) {
             Assertions.assertEquals("Неправильный email пользователя", e.getMessage());
         }
@@ -32,6 +33,7 @@ class UserControllerTest {
 
         try {
             userController.validateNewUser(user);
+            Assertions.assertEquals(true, false);
         } catch (ValidateException e) {
             Assertions.assertEquals("Неправильный email пользователя", e.getMessage());
         }
@@ -47,6 +49,7 @@ class UserControllerTest {
 
         try {
             userController.validateNewUser(user);
+            Assertions.assertEquals(true, false);
         } catch (ValidateException e) {
             Assertions.assertEquals("Имя пользователя и логин являются пустыми", e.getMessage());
         }
@@ -62,6 +65,7 @@ class UserControllerTest {
 
         try {
             userController.validateNewUser(user);
+            Assertions.assertEquals(true, false);
         } catch (ValidateException e) {
             Assertions.assertEquals("Неправильный логин пользователя!", e.getMessage());
         }
@@ -76,6 +80,7 @@ class UserControllerTest {
         user.setBirthday(LocalDate.now().plusMonths(1));
         try {
             userController.validateNewUser(user);
+            Assertions.assertEquals(true, false);
         } catch (ValidateException e) {
             Assertions.assertEquals("Неправильная дата рождения пользователя", e.getMessage());
         }

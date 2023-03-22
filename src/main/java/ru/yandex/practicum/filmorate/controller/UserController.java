@@ -1,8 +1,8 @@
-package controller;
+package ru.yandex.practicum.filmorate.controller;
 
-import exception.ValidateException;
+import ru.yandex.practicum.filmorate.exception.ValidateException;
 import lombok.extern.slf4j.Slf4j;
-import model.User;
+import ru.yandex.practicum.filmorate.model.User;
 import org.springframework.util.IdGenerator;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,11 +11,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/users")
 @Slf4j
 public class UserController {
     protected HashMap<Long, User> userStorage = new HashMap<>();
-    public IdGenerator idGenerator;
 
     public UserController() {
     }
@@ -24,8 +23,19 @@ public class UserController {
     @PostMapping
     public @ResponseBody User create(@RequestBody User user) throws ValidateException {
         validateNewUser(user);
-        if (user.getId() == null) {
-            user.setId(generateNewId());
+        user.setId(generateNewId());
+        if (user.getName() == null) {
+            user.setName(user.getLogin());
+        }
+        userStorage.put(user.getId(), user);
+        return user;
+    }
+
+    @PutMapping
+    public @ResponseBody User update(@RequestBody User user) throws ValidateException {
+        validateNewUser(user);
+        if (user.getId() == null || !userStorage.containsKey(user.getId())) {
+            throw new ValidateException("id  не может быть null");
         } else {
             userStorage.put(user.getId(), user);
         }
