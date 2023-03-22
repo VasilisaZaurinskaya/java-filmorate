@@ -37,7 +37,7 @@ public class FilmController {
 
     }
 
-    private void validateNewFilm(Film film) throws ValidateException {
+  public void validateNewFilm(Film film) throws ValidateException {
         if (film.getName() == null) throw new ValidateException("Название фильма пустое");
         if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28)))
             throw new ValidateException("Дата релиза не может быть раньше 28 декабря 1895 года");
