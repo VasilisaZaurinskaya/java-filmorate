@@ -3,7 +3,6 @@ package controller;
 import exception.ValidateException;
 import lombok.extern.slf4j.Slf4j;
 import model.Film;
-import org.springframework.util.IdGenerator;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -19,10 +18,8 @@ import java.util.HashMap;
 @Slf4j
 public class FilmController {
     protected HashMap<Long, Film> filmStorage = new HashMap<>();
-    public IdGenerator idGenerator;
 
-    public FilmController(IdGenerator idGenerator) {
-        this.idGenerator = idGenerator;
+    public FilmController() {
     }
 
     @PostMapping
@@ -37,8 +34,8 @@ public class FilmController {
 
     }
 
-  public void validateNewFilm(Film film) throws ValidateException {
-        if (film.getName() == null) throw new ValidateException("Название фильма пустое");
+    public void validateNewFilm(Film film) throws ValidateException {
+        if (film.getName() == null) throw new ValidateException("Название фильма не может быть пустым");
         if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28)))
             throw new ValidateException("Дата релиза не может быть раньше 28 декабря 1895 года");
         if (film.getDescription().length() > 200)
