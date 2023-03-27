@@ -3,7 +3,6 @@ package ru.yandex.practicum.filmorate.controller;
 import ru.yandex.practicum.filmorate.exception.ValidateException;
 import lombok.extern.slf4j.Slf4j;
 import ru.yandex.practicum.filmorate.model.User;
-import org.springframework.util.IdGenerator;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
