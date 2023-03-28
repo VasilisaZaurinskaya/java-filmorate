@@ -34,6 +34,7 @@ public class UserController {
     public @ResponseBody User update(@RequestBody User user) throws ValidateException {
         validateNewUser(user);
         if (user.getId() == null || !userStorage.containsKey(user.getId())) {
+            log.error("id  не может быть null");
             throw new ValidateException("id  не может быть null");
         } else {
             userStorage.put(user.getId(), user);
@@ -43,14 +44,25 @@ public class UserController {
 
 
     public void validateNewUser(User user) throws ValidateException {
-        if (user.getName() == null && user.getLogin() == null)
+
+        if (user.getName() == null && user.getLogin() == null) {
+            log.error("Имя пользователя и логин являются пустыми");
             throw new ValidateException("Имя пользователя и логин являются пустыми");
-        if (user.getLogin() == null || user.getLogin().contains(" "))
+        }
+        if (user.getLogin() == null || user.getLogin().contains(" ")) {
+            log.error("Неправильный логин пользователя!");
             throw new ValidateException("Неправильный логин пользователя!");
-        if (user.getEmail() == null || !user.getEmail().contains("@"))
+        }
+        if (user.getEmail() == null || !user.getEmail().contains("@")) {
+            log.error("Неправильный email пользователя");
             throw new ValidateException("Неправильный email пользователя");
-        if (user.getBirthday().isAfter(LocalDate.now()))
+        }
+
+        if (user.getBirthday().isAfter(LocalDate.now())) {
+            log.error("Неправильная дата рождения пользователя");
             throw new ValidateException("Неправильная дата рождения пользователя");
+        }
+
 
     }
 

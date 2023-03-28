@@ -24,15 +24,10 @@ public class FilmController {
     @PostMapping
     public @ResponseBody Film create(@RequestBody Film film) throws ValidateException {
 
-        try {
-            validateNewFilm(film);
-        } catch (ValidateException e) {
-            log.error(e.getMessage(), e);
-            throw new RuntimeException(e);
-        }
 
         film.setId(generateNewId());
         if (film.getName() == null) {
+            log.error("Название фильма не может быть пустым");
             throw new ValidateException("Название фильма не может быть пустым");
         }
         filmStorage.put(film.getId(), film);
@@ -41,14 +36,10 @@ public class FilmController {
 
     @PutMapping
     public @ResponseBody Film update(@RequestBody Film film) throws ValidateException {
-        try {
-            validateNewFilm(film);
-        } catch (ValidateException e) {
-            log.error(e.getMessage(), e);
-            throw new RuntimeException(e);
-        }
+
 
         if (film.getId() == null || !filmStorage.containsKey(film.getId())) {
+            log.error("id  не может быть null");
             throw new ValidateException("id  не может быть null");
         } else {
             filmStorage.put(film.getId(), film);
@@ -60,16 +51,20 @@ public class FilmController {
     public void validateNewFilm(Film film) throws ValidateException {
 
         if (film.getName() == null || film.getName().isEmpty()) {
+            log.error("Название фильма не может быть пустым");
             throw new ValidateException("Название фильма не может быть пустым");
         }
 
         if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
+            log.error("Дата релиза не может быть раньше 28 декабря 1895 года");
             throw new ValidateException("Дата релиза не может быть раньше 28 декабря 1895 года");
         }
         if (film.getDescription().length() > 200) {
+            log.error("Описание не должно превышать 200 символов");
             throw new ValidateException("Описание не должно превышать 200 символов");
         }
         if (film.getDuration() < 0) {
+            log.error("Продолжительность фильма должна быть положительной");
             throw new ValidateException("Продолжительность фильма должна быть положительной");
         }
 
