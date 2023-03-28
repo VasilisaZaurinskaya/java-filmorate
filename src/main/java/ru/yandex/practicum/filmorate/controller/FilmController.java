@@ -25,18 +25,24 @@ public class FilmController {
     public @ResponseBody Film create(@RequestBody Film film) throws ValidateException {
 
         validateNewFilm(film);
-
         film.setId(generateNewId());
+        if (film.getName() == null) {
+            throw new ValidateException("Название фильма не может быть пустым");
+        }
         filmStorage.put(film.getId(), film);
         return film;
     }
 
     @PutMapping
     public @ResponseBody Film update(@RequestBody Film film) throws ValidateException {
+
         validateNewFilm(film);
 
-
-        filmStorage.put(film.getId(), film);
+        if (film.getId() == null || !filmStorage.containsKey(film.getId())) {
+            throw new ValidateException("id  не может быть null");
+        } else {
+            filmStorage.put(film.getId(), film);
+        }
         return film;
 
     }
