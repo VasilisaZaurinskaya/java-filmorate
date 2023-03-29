@@ -27,6 +27,7 @@ public class FilmController {
         validateNewFilm(film);
         film.setId(generateNewId());
         if (film.getName() == null) {
+            log.error("Название фильма не может быть пустым");
             throw new ValidateException("Название фильма не может быть пустым");
         }
         filmStorage.put(film.getId(), film);
@@ -39,6 +40,7 @@ public class FilmController {
         validateNewFilm(film);
 
         if (film.getId() == null || !filmStorage.containsKey(film.getId())) {
+            log.error("id  не может быть null");
             throw new ValidateException("id  не может быть null");
         } else {
             filmStorage.put(film.getId(), film);
