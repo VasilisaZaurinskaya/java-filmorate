@@ -21,7 +21,7 @@ public class FilmContorlollerTest {
 
     @Test
     void validateDescriptionTest() {
-        FilmController filmController = new FilmController();
+        FilmController filmController = new FilmController ();
 
         Film film = getDefaultFilm();
         film.setDescription("Звёздные во́йны. Эпизо́д I: Скры́тая угро́за» (англ. Star Wars. Episode I: The Phantom Menace) — эпическая космическая опера, снятая и написанная Джорджем Лукасом. Это четвёртый фильм, выпущенный в рамках киносаги «Звёздные войны», выступающий первой частью трилогии приквелов «Звёздных войн» и начало «Саги Скайуокеров» с хронологической точки зрения. Кроме того, это четвёртая полнометражная картина Лукаса, выпущенная им после 22-летнего перерыва в режиссуре, со времён работы над своим предыдущим фильмом «Звёздные войны. Эпизод IV: Новая надежда» (1977).");
