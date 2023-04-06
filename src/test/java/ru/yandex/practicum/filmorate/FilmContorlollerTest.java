@@ -5,6 +5,8 @@ import ru.yandex.practicum.filmorate.exception.ValidateException;
 import ru.yandex.practicum.filmorate.model.Film;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import ru.yandex.practicum.filmorate.service.FilmService;
+
 
 
 import java.time.LocalDate;
@@ -77,7 +79,8 @@ public class FilmContorlollerTest {
 
     @Test
     void validateReleaseDateTest() {
-        FilmController filmController = new FilmController();
+       FilmService filmService = new FilmService();
+        FilmController filmController = new FilmController(filmService);
 
         Film film = getDefaultFilm();
         film.setReleaseDate(LocalDate.of(1894, 10, 04));

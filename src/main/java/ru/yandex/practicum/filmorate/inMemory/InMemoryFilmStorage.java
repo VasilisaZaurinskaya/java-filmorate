@@ -1,25 +1,29 @@
-package ru.yandex.practicum.filmorate.storage;
+package ru.yandex.practicum.filmorate.inMemory;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.controller.FilmController;
+import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.ValidateException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
+import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
-@Service
 @Slf4j
-public class FilmService {
+@Component
+public class InMemoryFilmStorage implements FilmStorage {
     protected HashMap<Long, Film> filmStorage = new HashMap<>();
 
-    public void createFilm(Film film, FilmController filmController) {
+
+    @Override
+    public Film createFilm(Film film) {
         film.setId(generateNewId());
         filmStorage.put(film.getId(), film);
+        return film;
     }
 
+    @Override
     public Film updateFilm(Film film) {
         if (film.getId() == null || !filmStorage.containsKey(film.getId())) {
             log.error("id  не может быть null");
@@ -30,9 +34,9 @@ public class FilmService {
         return film;
     }
 
+    @Override
     public List<Film> getAllFilms() {
         return new ArrayList<>(filmStorage.values());
-
     }
 
     public long getMaxId() {
@@ -50,4 +54,5 @@ public class FilmService {
         long newId = maxId + 1;
         return newId;
     }
+
 }

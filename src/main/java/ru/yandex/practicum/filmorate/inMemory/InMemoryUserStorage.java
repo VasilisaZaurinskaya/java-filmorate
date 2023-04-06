@@ -1,28 +1,27 @@
-package ru.yandex.practicum.filmorate.storage;
+package ru.yandex.practicum.filmorate.inMemory;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.ValidateException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-@Service
 @Slf4j
-public class UserService {
+@Component
+public class InMemoryUserStorage implements UserStorage {
     protected HashMap<Long, User> userStorage = new HashMap<>();
 
-    public User createUser(User user) {
+    @Override
+    public void createUser(User user) {
         user.setId(generateNewId());
-        if (user.getName() == null) {
-            user.setName(user.getLogin());
-        }
         userStorage.put(user.getId(), user);
-        return user;
     }
 
+    @Override
     public User updateUser(User user) {
         if (user.getId() == null || !userStorage.containsKey(user.getId())) {
             log.error("id  не может быть null");
@@ -33,9 +32,15 @@ public class UserService {
         return user;
     }
 
-
+    @Override
     public List<User> getAllUsers() {
         return new ArrayList<>(userStorage.values());
+    }
+
+    public long generateNewId() {
+        long maxId = getMaxId();
+        long newId = maxId + 1;
+        return newId;
     }
 
     private long getMaxId() {
@@ -46,11 +51,5 @@ public class UserService {
             }
         }
         return maxId;
-    }
-
-    public long generateNewId() {
-        long maxId = getMaxId();
-        long newId = maxId + 1;
-        return newId;
     }
 }
