@@ -37,5 +37,47 @@ public class UserService {
         return userStorage.getAllUsers();
     }
 
+    public void addFriend(Long id, Long friendId) {
 
+        User user = userStorage.getUserbyId(id);
+        User userFriend = userStorage.getUserbyId(friendId);
+
+        if (user == null) {
+            log.error("Не найден пользователь с id = {}", id);
+            throw new ValidateException("Не найден пользователь с указанным id");
+        }
+        if (userFriend == null) {
+            log.error("Не найден пользователь с id = {}", friendId);
+            throw new ValidateException("Не найден пользователь с указанным id");
+        }
+
+        user.getFriends().add(friendId);
+        userFriend.getFriends().add(id);
+
+        userStorage.updateUser(user);
+        userStorage.updateUser(userFriend);
+
+    }
+
+    public void deleteFriend(Long id, Long friendId) {
+
+        User user = userStorage.getUserbyId(id);
+        User userFriend = userStorage.getUserbyId(friendId);
+
+        if (user == null) {
+            log.error("Не найден пользователь с id = {}", id);
+            throw new ValidateException("Не найден пользователь с указанным id");
+        }
+        if (userFriend == null) {
+            log.error("Не найден пользователь с id = {}", friendId);
+            throw new ValidateException("Не найден пользователь с указанным id");
+        }
+
+        user.getFriends().remove(friendId);
+        userFriend.getFriends().remove(id);
+
+        userStorage.updateUser(user);
+        userStorage.updateUser(userFriend);
+
+    }
 }

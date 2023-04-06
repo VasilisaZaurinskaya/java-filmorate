@@ -37,6 +37,11 @@ public class UserController {
         return userService.updateUser(user);
     }
 
+    @GetMapping
+    public @ResponseBody List<User> getAllUsers() {
+        return userService.getAllUsers();
+    }
+
 
     public void validateNewUser(User user) throws ValidateException {
 
@@ -61,9 +66,11 @@ public class UserController {
 
     }
 
-    @GetMapping
-    public @ResponseBody List<User> getAllUsers() {
-        return userService.getAllUsers();
+    public void validateAddFriend(Long id, Long friendId) throws ValidateException {
+        if (id == null || friendId == null) {
+            log.error("Не указаны параметры для добавления в друзья");
+            throw new ValidateException("id не может быть равен null");
+        }
     }
 
 

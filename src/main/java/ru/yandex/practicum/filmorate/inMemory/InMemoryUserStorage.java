@@ -37,6 +37,11 @@ public class InMemoryUserStorage implements UserStorage {
         return new ArrayList<>(userStorage.values());
     }
 
+    @Override
+    public User getUserbyId(Long id) {
+        return userStorage.get(id);
+    }
+
     public long generateNewId() {
         long maxId = getMaxId();
         long newId = maxId + 1;
