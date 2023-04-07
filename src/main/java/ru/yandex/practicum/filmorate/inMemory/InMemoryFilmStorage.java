@@ -39,6 +39,11 @@ public class InMemoryFilmStorage implements FilmStorage {
         return new ArrayList<>(filmStorage.values());
     }
 
+    @Override
+    public Film getFilById(Long filmId) {
+        return filmStorage.get(filmId);
+    }
+
     public long getMaxId() {
         long maxId = 0;
         for (long id : filmStorage.keySet()) {

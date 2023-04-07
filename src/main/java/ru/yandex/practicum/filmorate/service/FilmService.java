@@ -4,23 +4,30 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.controller.FilmController;
+import ru.yandex.practicum.filmorate.exception.ValidateException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
 @Slf4j
 public class FilmService {
     private final FilmStorage filmStorage;
+    private final UserStorage userStorage;
 
     @Autowired
-    public FilmService(FilmStorage filmStorage) {
+    public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
         this.filmStorage = filmStorage;
+        this.userStorage = userStorage;
     }
 
     public Film createFilm(Film film, FilmController filmController) {
-      return filmStorage.createFilm(film);
+        return filmStorage.createFilm(film);
     }
 
     public Film updateFilm(Film film) {
@@ -32,5 +39,59 @@ public class FilmService {
 
     }
 
+    public void setLike(Long userId, Long filmId) {
+
+        User user = userStorage.getUserbyId(userId);
+        Film film = filmStorage.getFilById(filmId);
+
+        if (user == null) {
+            log.error("Не найден пользователь с id = {}", userId);
+            throw new ValidateException("Не найден пользователь с указанным id");
+        }
+        if (film == null) {
+            log.error("Не найден фильм с id = {}", filmId);
+            throw new ValidateException("Не найден пользователь с указанным id");
+        }
+
+        user.getLikedFilms().add(filmId);
+        film.getUsersWhoLiked().add(userId);
+
+        userStorage.updateUser(user);
+        filmStorage.updateFilm(film);
+
+    }
+
+    public void removeLike(Long userId, Long filmId) {
+
+        User user = userStorage.getUserbyId(userId);
+        Film film = filmStorage.getFilById(filmId);
+
+        if (user == null) {
+            log.error("Не найден пользователь с id = {}", userId);
+            throw new ValidateException("Не найден пользователь с указанным id");
+        }
+        if (film == null) {
+            log.error("Не найден фильм с id = {}", filmId);
+            throw new ValidateException("Не найден пользователь с указанным id");
+        }
+
+        user.getLikedFilms().remove(filmId);
+        film.getUsersWhoLiked().remove(userId);
+
+        userStorage.updateUser(user);
+        filmStorage.updateFilm(film);
+
+    }
+
+    public List<Film> getMostPopularFilms(Long count) {
+        List<Film> topFilms = filmStorage.getAllFilms();
+        topFilms.sort((o1, o2) -> o2.getUsersWhoLiked().size() - o1.getUsersWhoLiked().size());
+        List<Film> result = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            result.add(topFilms.get(i));
+        }
+
+        return result;
+    }
 
 }

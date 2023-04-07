@@ -80,4 +80,30 @@ public class UserService {
         userStorage.updateUser(userFriend);
 
     }
+
+    public List<User> getFriendList(Long userId) {
+        List<User> friendList = null;
+        User user = userStorage.getUserbyId(userId);
+        for (Long friendId : user.getFriends()) {
+            User friend = userStorage.getUserbyId(friendId);
+            friendList.add(friend);
+        }
+        return friendList;
+    }
+
+    public List<User> getMitualFriends(Long id, Long friendId) {
+
+        List<User> sharedFriendsList = null;
+        User user = userStorage.getUserbyId(id);
+        User friend = userStorage.getUserbyId(friendId);
+        for (Long friendForList : user.getFriends()) {
+            if (friend.getFriends().contains(friendForList)) {
+                User sharedFriend = userStorage.getUserbyId(friendForList);
+                sharedFriendsList.add(sharedFriend);
+            }
+
+        }
+        return sharedFriendsList;
+    }
+
 }
