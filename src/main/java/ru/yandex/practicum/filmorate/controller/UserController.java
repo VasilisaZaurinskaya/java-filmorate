@@ -66,11 +66,42 @@ public class UserController {
 
     }
 
+    public void validateUserFriend(Long id) {
+        if (id == null &&  userService.getUserById(id) == null) {
+            log.error("Не указаны параметры для удаления из друзей");
+            throw new ValidateException("id не может быть равен null");
+        }
+
+    }
+
     public void validateAddFriend(Long id, Long friendId) throws ValidateException {
         if (id == null || friendId == null) {
             log.error("Не указаны параметры для добавления в друзья");
             throw new ValidateException("id не может быть равен null");
         }
+    }
+
+    @PutMapping
+    public @ResponseBody void addFriend(Long id, Long friendId) {
+        validateAddFriend(id, friendId);
+        userService.addFriend(id, friendId);
+
+    }
+
+    @DeleteMapping
+    public @ResponseBody void deleteFriend(Long id, Long friendId) {
+       validateUserFriend(id);
+        userService.deleteFriend(id, friendId);
+    }
+
+    @GetMapping
+    public @ResponseBody List<User> getFriendList(Long userId) {
+        return userService.getFriendList(userId);
+    }
+
+    @GetMapping
+    public @ResponseBody List<User> getMitualFriends(Long id, Long friendId) {
+        return userService.getMitualFriends(id, friendId);
     }
 
 

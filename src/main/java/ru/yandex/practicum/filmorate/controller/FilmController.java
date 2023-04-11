@@ -69,5 +69,17 @@ public class FilmController {
         return filmService.getAllFilms();
     }
 
+    public void validateUserAndFilm(Long userId, Long filmId) {
+        if(userId == null || filmId == null){
+            log.error("Фильм и пользователь не указаны");
+            throw new ValidateException("Нехватка данных ");
+        }
+    }
+
+    @PutMapping
+    public @ResponseBody void setLike(Long userId, Long filmId) {
+        filmService.setLike(userId, filmId);
+    }
+
 
 }

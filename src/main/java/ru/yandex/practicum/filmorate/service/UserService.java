@@ -20,6 +20,10 @@ public class UserService {
         this.userStorage = userStorage;
     }
 
+    public User getUserById(Long id) {
+        return userStorage.getUserbyId(id);
+    }
+
     public User createUser(User user) {
         if (user.getName() == null) {
             user.setName(user.getLogin());
