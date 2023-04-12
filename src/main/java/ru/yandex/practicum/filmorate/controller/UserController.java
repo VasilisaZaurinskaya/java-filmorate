@@ -85,7 +85,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}/friends/{friendId}")
-    public @ResponseBody void addFriend(
+    public void addFriend(
             @PathVariable Long id,
             @PathVariable Long friendId
     ) {
@@ -95,7 +95,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}/friends/{friendId}")
-    public @ResponseBody void deleteFriend(
+    public void deleteFriend(
             @PathVariable Long id,
             @PathVariable Long friendId
     ) {
