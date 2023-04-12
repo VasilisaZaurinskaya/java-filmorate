@@ -83,7 +83,7 @@ public class FilmController {
     }
 
     @PutMapping("{filmId}/like/{userId}")
-    public @ResponseBody void setLike(
+    public  void setLike(
             @PathVariable Long userId,
             @PathVariable Long filmId
     ) {
@@ -92,7 +92,7 @@ public class FilmController {
     }
 
     @DeleteMapping("{filmId}/like/{userId}")
-    public @ResponseBody void deleteLike(
+    public void deleteLike(
             @PathVariable Long userId,
             @PathVariable Long filmId
     ) {
