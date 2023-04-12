@@ -8,6 +8,7 @@ import ru.yandex.practicum.filmorate.exception.ValidateException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
+import javax.websocket.server.PathParam;
 import java.time.LocalDate;
 
 import java.util.List;
@@ -25,7 +26,7 @@ public class FilmController {
         this.filmService = filmService;
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{filmId}")
     public Film getFilmById(@PathVariable Long filmId) {
         return filmService.getFilmById(filmId);
     }
@@ -82,7 +83,10 @@ public class FilmController {
     }
 
     @PutMapping("{filmId}/like/{userId}")
-    public @ResponseBody void setLike(@PathVariable Long userId, Long filmId) {
+    public @ResponseBody void setLike(
+            @PathVariable Long userId,
+            @PathVariable Long filmId
+    ) {
         validateUserAndFilm(userId, filmId);
         filmService.setLike(userId, filmId);
     }
@@ -96,8 +100,13 @@ public class FilmController {
         filmService.removeLike(userId, filmId);
     }
 
-    @GetMapping("/popular?count={count}")
-    public @ResponseBody List<Film> getMostPopularFilms(@PathVariable Long count) {
+    @GetMapping("/popular")
+    public @ResponseBody List<Film> getMostPopularFilms(
+            @PathParam(value = "count") Long count
+    ) {
+        if (count == null) {
+            count = 10L;
+        }
         return filmService.getMostPopularFilms(count);
     }
 

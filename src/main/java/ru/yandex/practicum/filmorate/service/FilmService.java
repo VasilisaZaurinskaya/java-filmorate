@@ -95,7 +95,10 @@ public class FilmService {
         List<Film> topFilms = filmStorage.getAllFilms();
         topFilms.sort((o1, o2) -> o2.getUsersWhoLiked().size() - o1.getUsersWhoLiked().size());
         List<Film> result = new ArrayList<>();
-        for (int i = 0; i < count; i++) {
+        Long topFilmsSize = topFilms.size() < count
+                ? topFilms.size()
+                : count;
+        for (int i = 0; i < topFilmsSize; i++) {
             result.add(topFilms.get(i));
         }
 
