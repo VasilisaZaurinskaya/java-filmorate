@@ -1,17 +1,26 @@
 package ru.yandex.practicum.filmorate;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import ru.yandex.practicum.filmorate.controller.FilmController;
 import ru.yandex.practicum.filmorate.exception.ValidateException;
 import ru.yandex.practicum.filmorate.model.Film;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.service.FilmService;
-
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 
 import java.time.LocalDate;
 
 public class FilmContorlollerTest {
+    public static FilmService filmService;
+
+    @Autowired
+    public FilmContorlollerTest(FilmService filmService) {
+        this.filmService = filmService;
+    }
+
+
     private Film getDefaultFilm() {
         Film film = new Film();
         film.setName("Звёздные войны: Эпизод 1 - Скрытая угроза");
@@ -23,7 +32,7 @@ public class FilmContorlollerTest {
 
     @Test
     void validateDescriptionTest() {
-        FilmController filmController = new FilmController ();
+        FilmController filmController = new FilmController(filmService);
 
         Film film = getDefaultFilm();
         film.setDescription("Звёздные во́йны. Эпизо́д I: Скры́тая угро́за» (англ. Star Wars. Episode I: The Phantom Menace) — эпическая космическая опера, снятая и написанная Джорджем Лукасом. Это четвёртый фильм, выпущенный в рамках киносаги «Звёздные войны», выступающий первой частью трилогии приквелов «Звёздных войн» и начало «Саги Скайуокеров» с хронологической точки зрения. Кроме того, это четвёртая полнометражная картина Лукаса, выпущенная им после 22-летнего перерыва в режиссуре, со времён работы над своим предыдущим фильмом «Звёздные войны. Эпизод IV: Новая надежда» (1977).");
@@ -39,7 +48,7 @@ public class FilmContorlollerTest {
 
     @Test
     void validateNameFilmTest() {
-        FilmController filmController = new FilmController();
+        FilmController filmController = new FilmController(filmService);
 
         Film film = getDefaultFilm();
         film.setName(null);
@@ -63,7 +72,7 @@ public class FilmContorlollerTest {
 
     @Test
     void validateDurationTest() {
-        FilmController filmController = new FilmController();
+        FilmController filmController = new FilmController(filmService);
 
         Film film = getDefaultFilm();
         film.setDuration(-100);
@@ -79,7 +88,6 @@ public class FilmContorlollerTest {
 
     @Test
     void validateReleaseDateTest() {
-       FilmService filmService = new FilmService();
         FilmController filmController = new FilmController(filmService);
 
         Film film = getDefaultFilm();

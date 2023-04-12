@@ -4,14 +4,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.controller.FilmController;
-import ru.yandex.practicum.filmorate.exception.ValidateException;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -39,6 +38,15 @@ public class FilmService {
 
     }
 
+    public Film getFilmById(Long filmId) {
+        if (filmStorage.getFilById(filmId) == null) {
+            log.error("Фильм не может быть равен null");
+            throw new NotFoundException("Фильм не может быть равен null");
+        } else {
+            return filmStorage.getFilById(filmId);
+        }
+    }
+
     public void setLike(Long userId, Long filmId) {
 
         User user = userStorage.getUserbyId(userId);
@@ -46,11 +54,11 @@ public class FilmService {
 
         if (user == null) {
             log.error("Не найден пользователь с id = {}", userId);
-            throw new ValidateException("Не найден пользователь с указанным id");
+            throw new NotFoundException("Не найден пользователь с указанным id");
         }
         if (film == null) {
             log.error("Не найден фильм с id = {}", filmId);
-            throw new ValidateException("Не найден пользователь с указанным id");
+            throw new NotFoundException("Не найден фильм с указанным id");
         }
 
         user.getLikedFilms().add(filmId);
@@ -68,11 +76,11 @@ public class FilmService {
 
         if (user == null) {
             log.error("Не найден пользователь с id = {}", userId);
-            throw new ValidateException("Не найден пользователь с указанным id");
+            throw new NotFoundException("Не найден пользователь с указанным id");
         }
         if (film == null) {
             log.error("Не найден фильм с id = {}", filmId);
-            throw new ValidateException("Не найден пользователь с указанным id");
+            throw new NotFoundException("Не найден фильм с указанным id");
         }
 
         user.getLikedFilms().remove(filmId);

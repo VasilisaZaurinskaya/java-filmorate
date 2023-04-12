@@ -22,12 +22,15 @@ public class UserController {
         this.userService = userService;
     }
 
+    @GetMapping("/{id}")
+    public @ResponseBody User getUserById(@PathVariable Long id) {
+        return userService.getUserById(id);
+    }
 
     @PostMapping
     public @ResponseBody User create(@RequestBody User user) throws ValidateException {
         validateNewUser(user);
-        userService.createUser(user);
-        return user;
+        return userService.createUser(user);
     }
 
 
@@ -67,7 +70,7 @@ public class UserController {
     }
 
     public void validateUserFriend(Long id) {
-        if (id == null &&  userService.getUserById(id) == null) {
+        if (id == null && userService.getUserById(id) == null) {
             log.error("Не указаны параметры для удаления из друзей");
             throw new ValidateException("id не может быть равен null");
         }
@@ -81,28 +84,37 @@ public class UserController {
         }
     }
 
-    @PutMapping
-    public @ResponseBody void addFriend(Long id, Long friendId) {
+    @PutMapping("/{id}/friends/{friendId}")
+    public @ResponseBody void addFriend(
+            @PathVariable Long id,
+            @PathVariable Long friendId
+    ) {
         validateAddFriend(id, friendId);
         userService.addFriend(id, friendId);
 
     }
 
-    @DeleteMapping
-    public @ResponseBody void deleteFriend(Long id, Long friendId) {
-       validateUserFriend(id);
+    @DeleteMapping("/{id}/friends/{friendId}")
+    public @ResponseBody void deleteFriend(
+            @PathVariable Long id,
+            @PathVariable Long friendId
+    ) {
+        validateUserFriend(id);
         userService.deleteFriend(id, friendId);
     }
 
-    @GetMapping
-    public @ResponseBody List<User> getFriendList(Long userId) {
+    @GetMapping("/{userId}/friends")
+    public @ResponseBody List<User> getFriendList(
+            @PathVariable Long userId
+    ) {
         return userService.getFriendList(userId);
     }
 
-    @GetMapping
-    public @ResponseBody List<User> getMitualFriends(Long id, Long friendId) {
-        return userService.getMitualFriends(id, friendId);
+    @GetMapping("/{id}/friends/common/{otherId}")
+    public @ResponseBody List<User> getMitualFriends(
+            @PathVariable Long id,
+            @PathVariable Long otherId
+    ) {
+        return userService.getMitualFriends(id, otherId);
     }
-
-
 }

@@ -25,6 +25,11 @@ public class FilmController {
         this.filmService = filmService;
     }
 
+    @GetMapping("/{id}")
+    public Film getFilmById(@PathVariable Long filmId) {
+        return filmService.getFilmById(filmId);
+    }
+
     @PostMapping
     public @ResponseBody Film create(@RequestBody Film film) throws ValidateException {
 
@@ -70,15 +75,30 @@ public class FilmController {
     }
 
     public void validateUserAndFilm(Long userId, Long filmId) {
-        if(userId == null || filmId == null){
-            log.error("Фильм и пользователь не указаны");
+        if (userId == null || filmId == null) {
+            log.error("Фильм или пользователь не указаны");
             throw new ValidateException("Нехватка данных ");
         }
     }
 
-    @PutMapping
-    public @ResponseBody void setLike(Long userId, Long filmId) {
+    @PutMapping("{filmId}/like/{userId}")
+    public @ResponseBody void setLike(@PathVariable Long userId, Long filmId) {
+        validateUserAndFilm(userId, filmId);
         filmService.setLike(userId, filmId);
+    }
+
+    @DeleteMapping("{filmId}/like/{userId}")
+    public @ResponseBody void deleteLike(
+            @PathVariable Long userId,
+            @PathVariable Long filmId
+    ) {
+        validateUserAndFilm(userId, filmId);
+        filmService.removeLike(userId, filmId);
+    }
+
+    @GetMapping("/popular?count={count}")
+    public @ResponseBody List<Film> getMostPopularFilms(@PathVariable Long count) {
+        return filmService.getMostPopularFilms(count);
     }
 
 

@@ -1,26 +1,33 @@
 package ru.yandex.practicum.filmorate;
 
-
+import org.springframework.beans.factory.annotation.Autowired;
 import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.exception.ValidateException;
-
 import ru.yandex.practicum.filmorate.model.User;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-
-
+import ru.yandex.practicum.filmorate.service.UserService;
 import java.time.LocalDate;
 
 @SpringBootTest
 class UserControllerTest {
 
+    private final UserService userService;
+
+    @Autowired
+    public UserControllerTest(UserService userService) {
+        this.userService = userService;
+
+    }
+
     @Test
     void validateEmailTest() {
-        UserController userController = new UserController();
+        UserController userController = new UserController(userService);
 
         User user = getDefaultUser();
         user.setEmail("NOT_A_EMAIL");
+
 
         try {
             userController.validateNewUser(user);
@@ -41,7 +48,7 @@ class UserControllerTest {
 
     @Test
     void validateNameTest() {
-        UserController userController = new UserController();
+        UserController userController = new UserController(userService);
 
         User user = getDefaultUser();
         user.setName(null);
@@ -58,7 +65,7 @@ class UserControllerTest {
 
     @Test
     void validateLoginTest() {
-        UserController userController = new UserController();
+        UserController userController = new UserController(userService);
 
         User user = getDefaultUser();
         user.setLogin(null);
@@ -74,7 +81,7 @@ class UserControllerTest {
 
     @Test
     void validateBirthdayTest() {
-        UserController userController = new UserController();
+        UserController userController = new UserController(userService);
 
         User user = getDefaultUser();
         user.setBirthday(LocalDate.now().plusMonths(1));

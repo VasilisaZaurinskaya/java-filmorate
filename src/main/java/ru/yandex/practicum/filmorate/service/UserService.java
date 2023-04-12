@@ -3,10 +3,12 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidateException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -21,15 +23,20 @@ public class UserService {
     }
 
     public User getUserById(Long id) {
-        return userStorage.getUserbyId(id);
+        if (userStorage.getUserbyId(id) == null) {
+            log.error("Пользватель не может быть равен null");
+            throw new NotFoundException("Пользватель не может быть равен null");
+        } else {
+            return userStorage.getUserbyId(id);
+        }
     }
 
     public User createUser(User user) {
-        if (user.getName() == null) {
+        if (user.getName() == null || user.getName().isEmpty()) {
             user.setName(user.getLogin());
         }
-        userStorage.createUser(user);
-        return user;
+        return userStorage.createUser(user);
+
     }
 
     public User updateUser(User user) {
@@ -48,11 +55,11 @@ public class UserService {
 
         if (user == null) {
             log.error("Не найден пользователь с id = {}", id);
-            throw new ValidateException("Не найден пользователь с указанным id");
+            throw new NotFoundException("Не найден пользователь с указанным id");
         }
         if (userFriend == null) {
             log.error("Не найден пользователь с id = {}", friendId);
-            throw new ValidateException("Не найден пользователь с указанным id");
+            throw new NotFoundException("Не найден пользователь с указанным id");
         }
 
         user.getFriends().add(friendId);
@@ -86,7 +93,7 @@ public class UserService {
     }
 
     public List<User> getFriendList(Long userId) {
-        List<User> friendList = null;
+        List<User> friendList = new ArrayList<>();
         User user = userStorage.getUserbyId(userId);
         for (Long friendId : user.getFriends()) {
             User friend = userStorage.getUserbyId(friendId);
@@ -95,11 +102,11 @@ public class UserService {
         return friendList;
     }
 
-    public List<User> getMitualFriends(Long id, Long friendId) {
+    public List<User> getMitualFriends(Long id, Long otherId) {
 
-        List<User> sharedFriendsList = null;
+        List<User> sharedFriendsList =  new ArrayList<>();
         User user = userStorage.getUserbyId(id);
-        User friend = userStorage.getUserbyId(friendId);
+        User friend = userStorage.getUserbyId(otherId);
         for (Long friendForList : user.getFriends()) {
             if (friend.getFriends().contains(friendForList)) {
                 User sharedFriend = userStorage.getUserbyId(friendForList);
