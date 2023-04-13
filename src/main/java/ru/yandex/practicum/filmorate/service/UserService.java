@@ -105,15 +105,17 @@ public class UserService {
 
     public List<User> getMitualFriends(Long id, Long otherId) {
 
+        List<Long> sharedFriendsIds = new ArrayList<>();
         List<User> sharedFriendsList = new ArrayList<>();
+
         User user = userStorage.getUserbyId(id);
         User friend = userStorage.getUserbyId(otherId);
-        for (Long friendForList : user.getFriends()) {
-            if (friend.getFriends().contains(friendForList)) {
-                User sharedFriend = userStorage.getUserbyId(friendForList);
-                sharedFriendsList.add(sharedFriend);
-            }
 
+        sharedFriendsIds.addAll(user.getFriends());
+        sharedFriendsIds.retainAll(friend.getFriends());
+
+        for (Long sharedFriendId : sharedFriendsIds) {
+            sharedFriendsList.add(userStorage.getUserbyId(sharedFriendId));
         }
         return sharedFriendsList;
     }
