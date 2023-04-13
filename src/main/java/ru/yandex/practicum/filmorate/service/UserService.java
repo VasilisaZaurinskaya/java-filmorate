@@ -8,6 +8,7 @@ import ru.yandex.practicum.filmorate.exception.ValidateException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -104,7 +105,7 @@ public class UserService {
 
     public List<User> getMitualFriends(Long id, Long otherId) {
 
-        List<User> sharedFriendsList =  new ArrayList<>();
+        List<User> sharedFriendsList = new ArrayList<>();
         User user = userStorage.getUserbyId(id);
         User friend = userStorage.getUserbyId(otherId);
         for (Long friendForList : user.getFriends()) {
@@ -115,6 +116,36 @@ public class UserService {
 
         }
         return sharedFriendsList;
+    }
+
+    public void validateAddFriend(Long id, Long friendId) throws ValidateException {
+        if (id == null || friendId == null) {
+            log.error("Не указаны параметры для добавления в друзья");
+            throw new ValidateException("id не может быть равен null");
+        }
+    }
+
+    public void validateNewUser(User user) throws ValidateException {
+
+        if (user.getName() == null && user.getLogin() == null) {
+            log.error("Имя пользователя и логин являются пустыми");
+            throw new ValidateException("Имя пользователя и логин являются пустыми");
+        }
+        if (user.getLogin() == null || user.getLogin().contains(" ")) {
+            log.error("Неправильный логин пользователя!");
+            throw new ValidateException("Неправильный логин пользователя!");
+        }
+        if (user.getEmail() == null || !user.getEmail().contains("@")) {
+            log.error("Неправильный email пользователя");
+            throw new ValidateException("Неправильный email пользователя");
+        }
+
+        if (user.getBirthday().isAfter(LocalDate.now())) {
+            log.error("Неправильная дата рождения пользователя");
+            throw new ValidateException("Неправильная дата рождения пользователя");
+        }
+
+
     }
 
 }

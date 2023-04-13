@@ -34,7 +34,7 @@ public class FilmController {
     @PostMapping
     public @ResponseBody Film create(@RequestBody Film film) throws ValidateException {
 
-        validateNewFilm(film);
+        filmService.validateNewFilm(film);
         filmService.createFilm(film, this);
         return film;
     }
@@ -42,52 +42,25 @@ public class FilmController {
     @PutMapping
     public @ResponseBody Film update(@RequestBody Film film) throws ValidateException {
 
-        validateNewFilm(film);
+        filmService.validateNewFilm(film);
 
         return filmService.updateFilm(film);
 
     }
 
-    public void validateNewFilm(Film film) throws ValidateException {
-
-        if (film.getName() == null || film.getName().isEmpty()) {
-            log.error("Название фильма не может быть пустым");
-            throw new ValidateException("Название фильма не может быть пустым");
-        }
-
-        if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
-            log.error("Дата релиза не может быть раньше 28 декабря 1895 года");
-            throw new ValidateException("Дата релиза не может быть раньше 28 декабря 1895 года");
-        }
-        if (film.getDescription().length() > 200) {
-            log.error("Описание не должно превышать 200 символов");
-            throw new ValidateException("Описание не должно превышать 200 символов");
-        }
-        if (film.getDuration() < 0) {
-            log.error("Продолжительность фильма должна быть положительной");
-            throw new ValidateException("Продолжительность фильма должна быть положительной");
-        }
-
-    }
 
     @GetMapping
     public @ResponseBody List<Film> getAllFilm() {
         return filmService.getAllFilms();
     }
 
-    public void validateUserAndFilm(Long userId, Long filmId) {
-        if (userId == null || filmId == null) {
-            log.error("Фильм или пользователь не указаны");
-            throw new ValidateException("Нехватка данных ");
-        }
-    }
 
     @PutMapping("{filmId}/like/{userId}")
-    public  void setLike(
+    public void setLike(
             @PathVariable Long userId,
             @PathVariable Long filmId
     ) {
-        validateUserAndFilm(userId, filmId);
+        filmService.validateUserAndFilm(userId, filmId);
         filmService.setLike(userId, filmId);
     }
 
@@ -96,7 +69,7 @@ public class FilmController {
             @PathVariable Long userId,
             @PathVariable Long filmId
     ) {
-        validateUserAndFilm(userId, filmId);
+        filmService.validateUserAndFilm(userId, filmId);
         filmService.removeLike(userId, filmId);
     }
 

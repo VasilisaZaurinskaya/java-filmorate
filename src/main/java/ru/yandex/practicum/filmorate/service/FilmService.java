@@ -5,11 +5,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.controller.FilmController;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.exception.ValidateException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -104,5 +106,35 @@ public class FilmService {
 
         return result;
     }
+
+    public void validateUserAndFilm(Long userId, Long filmId) {
+        if (userId == null || filmId == null) {
+            log.error("Фильм или пользователь не указаны");
+            throw new ValidateException("Нехватка данных ");
+        }
+    }
+
+    public void validateNewFilm(Film film) throws ValidateException {
+
+        if (film.getName() == null || film.getName().isEmpty()) {
+            log.error("Название фильма не может быть пустым");
+            throw new ValidateException("Название фильма не может быть пустым");
+        }
+
+        if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
+            log.error("Дата релиза не может быть раньше 28 декабря 1895 года");
+            throw new ValidateException("Дата релиза не может быть раньше 28 декабря 1895 года");
+        }
+        if (film.getDescription().length() > 200) {
+            log.error("Описание не должно превышать 200 символов");
+            throw new ValidateException("Описание не должно превышать 200 символов");
+        }
+        if (film.getDuration() < 0) {
+            log.error("Продолжительность фильма должна быть положительной");
+            throw new ValidateException("Продолжительность фильма должна быть положительной");
+        }
+
+    }
+
 
 }
