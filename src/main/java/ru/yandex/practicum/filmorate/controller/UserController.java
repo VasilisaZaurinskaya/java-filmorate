@@ -28,29 +28,18 @@ public class UserController {
 
     @PostMapping
     public @ResponseBody User create(@RequestBody User user) throws ValidateException {
-        userService.validateNewUser(user);
         return userService.createUser(user);
     }
 
 
     @PutMapping
     public @ResponseBody User update(@RequestBody User user) throws ValidateException {
-        userService.validateNewUser(user);
         return userService.updateUser(user);
     }
 
     @GetMapping
     public @ResponseBody List<User> getAllUsers() {
         return userService.getAllUsers();
-    }
-
-
-    public void validateUserFriend(Long id) {
-        if (id == null && userService.getUserById(id) == null) {
-            log.error("Не указаны параметры для удаления из друзей");
-            throw new ValidateException("id не может быть равен null");
-        }
-
     }
 
 
@@ -69,7 +58,7 @@ public class UserController {
             @PathVariable Long id,
             @PathVariable Long friendId
     ) {
-        validateUserFriend(id);
+        userService.validateUserFriend(id);
         userService.deleteFriend(id, friendId);
     }
 

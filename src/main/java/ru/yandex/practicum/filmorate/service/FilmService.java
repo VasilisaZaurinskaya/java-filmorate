@@ -28,10 +28,12 @@ public class FilmService {
     }
 
     public Film createFilm(Film film, FilmController filmController) {
+        validateNewFilm(film);
         return filmStorage.createFilm(film);
     }
 
     public Film updateFilm(Film film) {
+        validateNewFilm(film);
         return filmStorage.updateFilm(film);
     }
 

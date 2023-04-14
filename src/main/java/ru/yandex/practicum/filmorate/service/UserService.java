@@ -33,6 +33,7 @@ public class UserService {
     }
 
     public User createUser(User user) {
+        validateNewUser(user);
         if (user.getName() == null || user.getName().isEmpty()) {
             user.setName(user.getLogin());
         }
@@ -41,6 +42,7 @@ public class UserService {
     }
 
     public User updateUser(User user) {
+        validateNewUser(user);
         return userStorage.updateUser(user);
     }
 
@@ -147,6 +149,14 @@ public class UserService {
             throw new ValidateException("Неправильная дата рождения пользователя");
         }
 
+
+    }
+
+    public void validateUserFriend(Long id) {
+        if (id == null && getUserById(id) == null) {
+            log.error("Не указаны параметры для удаления из друзей");
+            throw new ValidateException("id не может быть равен null");
+        }
 
     }
 

@@ -34,7 +34,6 @@ public class FilmController {
     @PostMapping
     public @ResponseBody Film create(@RequestBody Film film) throws ValidateException {
 
-        filmService.validateNewFilm(film);
         filmService.createFilm(film, this);
         return film;
     }
@@ -42,7 +41,6 @@ public class FilmController {
     @PutMapping
     public @ResponseBody Film update(@RequestBody Film film) throws ValidateException {
 
-        filmService.validateNewFilm(film);
 
         return filmService.updateFilm(film);
 
