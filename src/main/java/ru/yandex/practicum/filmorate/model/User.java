@@ -13,6 +13,7 @@ public class User {
     private String login;
     private String name;
     private LocalDate birthday;
+    private String friendship_status;
     private Set<Long> friends = new HashSet<>();
     private Set<Long> likedFilms = new HashSet<>();
 
