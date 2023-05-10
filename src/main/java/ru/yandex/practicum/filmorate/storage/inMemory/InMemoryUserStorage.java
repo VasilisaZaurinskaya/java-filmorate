@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidateException;
+import ru.yandex.practicum.filmorate.model.Friend;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
@@ -44,7 +45,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public Optional<User> getUserbyId(Long id) {
+    public User getUserbyId(Long id) {
         return userStorage.get(id);
     }
 
@@ -64,7 +65,17 @@ public class InMemoryUserStorage implements UserStorage {
         return maxId;
     }
 
-    private List<User> getFriend() {
-        return new ArrayList<>(userStorage.values());
+    @Override
+    public List<Friend> getFriendList(Long userId) {
+        List<Friend> friendList = new ArrayList<>();
+        User user = getUserbyId(userId);
+        for (Long friendId : user.getFriends()) {
+            User friendUser = getUserbyId(friendId);
+            Friend friend = new Friend();
+            friend.setUser(friendUser);
+            friend.setFriendshipStatus("подтверждённая");
+            friendList.add(friend);
+        }
+        return friendList;
     }
 }

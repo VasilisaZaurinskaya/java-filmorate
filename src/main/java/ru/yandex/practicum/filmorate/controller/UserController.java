@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import ru.yandex.practicum.filmorate.exception.ValidateException;
 import lombok.extern.slf4j.Slf4j;
+import ru.yandex.practicum.filmorate.model.Friend;
 import ru.yandex.practicum.filmorate.model.User;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.service.UserService;
@@ -64,7 +65,7 @@ public class UserController {
     }
 
     @GetMapping("/{userId}/friends")
-    public @ResponseBody List<User> getFriendList(
+    public @ResponseBody List<Friend> getFriendList(
             @PathVariable Long userId
     ) {
         return userService.getFriendList(userId);

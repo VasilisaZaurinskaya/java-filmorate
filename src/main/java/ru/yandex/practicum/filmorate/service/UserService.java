@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidateException;
+import ru.yandex.practicum.filmorate.model.Friend;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
@@ -96,14 +97,8 @@ public class UserService {
 
     }
 
-    public List<User> getFriendList(Long userId) {
-        List<User> friendList = new ArrayList<>();
-        User user = userStorage.getUserbyId(userId);
-        for (Long friendId : user.getFriends()) {
-            User friend = userStorage.getUserbyId(friendId);
-            friendList.add(friend);
-        }
-        return friendList;
+    public List<Friend> getFriendList(Long userId) {
+        return userStorage.getFriendList(userId);
     }
 
     public List<User> getMitualFriends(Long id, Long otherId) {
