@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.inMemory;
+package ru.yandex.practicum.filmorate.storage.inMemory;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -10,6 +10,7 @@ import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Optional;
 
 @Slf4j
 @Component
@@ -44,7 +45,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Film getFilById(Long filmId) {
+    public Optional<Film> getFilById(Long filmId) {
         return filmStorage.get(filmId);
     }
 

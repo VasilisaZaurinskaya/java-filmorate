@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.inMemory;
+package ru.yandex.practicum.filmorate.storage.inMemory;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -10,21 +10,22 @@ import ru.yandex.practicum.filmorate.storage.UserStorage;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Component
 public class InMemoryUserStorage implements UserStorage {
-    protected HashMap<Long, User> userStorage = new HashMap<>();
+    protected HashMap<Long, Optional<User>> userStorage = new HashMap<>();
 
     @Override
-    public User createUser(User user) {
+    public Optional<User> createUser(Optional<User> user) {
         user.setId(generateNewId());
         userStorage.put(user.getId(), user);
         return user;
     }
 
     @Override
-    public User updateUser(User user) {
+    public Optional<User> updateUser(Optional<User> user) {
         if (user.getId() == null) {
             log.error("id  не может быть null");
             throw new ValidateException("id  не может быть null");
@@ -43,7 +44,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User getUserbyId(Long id) {
+    public Optional<User> getUserbyId(Long id) {
         return userStorage.get(id);
     }
 
@@ -61,5 +62,9 @@ public class InMemoryUserStorage implements UserStorage {
             }
         }
         return maxId;
+    }
+
+    private List<User> getFriend() {
+        return new ArrayList<>(userStorage.values());
     }
 }

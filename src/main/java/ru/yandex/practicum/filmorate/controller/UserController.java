@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.service.UserService;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
@@ -27,13 +28,13 @@ public class UserController {
     }
 
     @PostMapping
-    public @ResponseBody User create(@RequestBody User user) throws ValidateException {
+    public @ResponseBody Optional<User> create(@RequestBody Optional<User> user) throws ValidateException {
         return userService.createUser(user);
     }
 
 
     @PutMapping
-    public @ResponseBody User update(@RequestBody User user) throws ValidateException {
+    public @ResponseBody Optional<User> update(@RequestBody Optional<User> user) throws ValidateException {
         return userService.updateUser(user);
     }
 

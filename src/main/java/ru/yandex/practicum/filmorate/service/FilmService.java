@@ -14,6 +14,7 @@ import ru.yandex.practicum.filmorate.storage.UserStorage;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -42,7 +43,7 @@ public class FilmService {
 
     }
 
-    public Film getFilmById(Long filmId) {
+    public Optional<Film> getFilmById(Long filmId) {
         if (filmStorage.getFilById(filmId) == null) {
             log.error("Фильм не может быть равен null");
             throw new NotFoundException("Фильм не может быть равен null");
@@ -53,7 +54,7 @@ public class FilmService {
 
     public void setLike(Long userId, Long filmId) {
 
-        User user = userStorage.getUserbyId(userId);
+        Optional<User> user = userStorage.getUserbyId(userId);
         Film film = filmStorage.getFilById(filmId);
 
         if (user == null) {
@@ -75,7 +76,7 @@ public class FilmService {
 
     public void removeLike(Long userId, Long filmId) {
 
-        User user = userStorage.getUserbyId(userId);
+        Optional<User> user = userStorage.getUserbyId(userId);
         Film film = filmStorage.getFilById(filmId);
 
         if (user == null) {

@@ -17,5 +17,18 @@ public class Film {
     private String mpa_rating;
     private Set<Long> usersWhoLiked = new HashSet<>();
 
+    public Film(Long id, String name, String description, LocalDate releaseDate, Integer duration,
+                String genre, String mpa_rating, Set<Long> usersWhoLiked) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.releaseDate = releaseDate;
+        this.duration = duration;
+        this.genre = genre;
+        this.mpa_rating = mpa_rating;
+        this.usersWhoLiked = usersWhoLiked;
+    }
 
+    public Film() {
+    }
 }
