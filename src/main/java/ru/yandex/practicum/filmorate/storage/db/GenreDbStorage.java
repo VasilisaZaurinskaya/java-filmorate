@@ -26,7 +26,7 @@ public class GenreDbStorage implements GenreStorage {
 
     @Override
     public List<Genre> getAllGenres() {
-        String sql = "select * from genres order by id";
+        String sql = "select * from genres order by genre_id";
         SqlRowSet genreRows = jdbcTemplate.queryForRowSet(sql);
         ArrayList<Genre> genres = new ArrayList<Genre>();
         while (genreRows.next()) {
@@ -40,7 +40,7 @@ public class GenreDbStorage implements GenreStorage {
 
     @Override
     public Genre getGenreById(Long id) {
-        String sql = "select * from genres where id = ?";
+        String sql = "select * from genres where genre_id = ?";
         SqlRowSet genreRows = jdbcTemplate.queryForRowSet(sql, id);
 
         if (genreRows.next()) {

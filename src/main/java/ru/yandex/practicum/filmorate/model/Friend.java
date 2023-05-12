@@ -4,7 +4,6 @@ import lombok.Data;
 
 @Data
 public class Friend {
-    User user;
+    private User friend;
     private String friendshipStatus;
-
 }

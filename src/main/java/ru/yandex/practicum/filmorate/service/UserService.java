@@ -66,20 +66,15 @@ public class UserService {
             throw new NotFoundException("Не найден пользователь с указанным id");
         }
 
-        user.getFriends().add(friendId);
-        userFriend.getFriends().add(id);
-
-        userStorage.updateUser(user);
-        userStorage.updateUser(userFriend);
-
+        userStorage.createFriend(user, userFriend);
     }
 
     public void deleteFriend(Long id, Long friendId) {
-
+        userStorage.deleteFriend(id, friendId);
 
     }
 
-    public List<Friend> getFriendList(Long userId) {
+    public List<User> getFriendList(Long userId) {
         return userStorage.getFriendList(userId);
     }
 

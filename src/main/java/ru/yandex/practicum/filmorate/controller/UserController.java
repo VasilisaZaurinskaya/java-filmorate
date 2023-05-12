@@ -65,7 +65,7 @@ public class UserController {
     }
 
     @GetMapping("/{userId}/friends")
-    public @ResponseBody List<Friend> getFriendList(
+    public @ResponseBody List<User> getFriendList(
             @PathVariable Long userId
     ) {
         return userService.getFriendList(userId);

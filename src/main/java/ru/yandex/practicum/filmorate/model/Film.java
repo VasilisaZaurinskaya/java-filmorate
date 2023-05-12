@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.model;
 
 import lombok.Data;
+import org.springframework.data.relational.core.sql.In;
 
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -14,18 +15,19 @@ public class Film {
     private LocalDate releaseDate;
     private Integer duration;
     private String genre;
-    private String mpa_rating;
+
+    private Long mpaRatingId;
     private Set<Long> usersWhoLiked = new HashSet<>();
 
     public Film(Long id, String name, String description, LocalDate releaseDate, Integer duration,
-                String genre, String mpa_rating, Set<Long> usersWhoLiked) {
+                String genre, Long mpaRatingId, Set<Long> usersWhoLiked) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.releaseDate = releaseDate;
         this.duration = duration;
         this.genre = genre;
-        this.mpa_rating = mpa_rating;
+        this.mpaRatingId = mpaRatingId;
         this.usersWhoLiked = usersWhoLiked;
     }
 

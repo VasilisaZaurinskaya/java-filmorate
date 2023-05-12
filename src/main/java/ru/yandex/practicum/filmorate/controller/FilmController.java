@@ -6,15 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.ValidateException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 
 import javax.websocket.server.PathParam;
 
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 
@@ -86,9 +83,5 @@ public class FilmController {
         return filmService.getMostPopularFilms(count);
     }
 
-    @GetMapping("/mpa")
-    public @ResponseBody List<Mpa> getMpa() {
-        return new ArrayList<Mpa>(Arrays.asList(Mpa.values()));
-    }
 
 }

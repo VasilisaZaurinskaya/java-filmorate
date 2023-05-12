@@ -50,7 +50,7 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public Film updateFilm(Film film) {
         SqlRowSet filmRows = jdbcTemplate.queryForRowSet(
-                "update film set(" +
+                "update films set(" +
                         "name, " +
                         "description, " +
                         "releaseDate, " +
@@ -64,7 +64,7 @@ public class FilmDbStorage implements FilmStorage {
                 film.getReleaseDate(),
                 film.getDuration(),
                 film.getGenre(),
-                film.getMpa_rating(),
+                film.getMpaRatingId(),
                 film.getUsersWhoLiked()
         );
         return film;
@@ -72,7 +72,7 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public List<Film> getAllFilms() {
-        SqlRowSet filmRows = jdbcTemplate.queryForRowSet("select id, name, description, releaseDate, duration, genre, mpa_rating, usersWhoLiked from film");
+        SqlRowSet filmRows = jdbcTemplate.queryForRowSet("select id, name, description, releaseDate, duration, genre, mpa_rating_id, usersWhoLiked from films");
         ArrayList<Film> films = new ArrayList<Film>();
         while (filmRows.next()) {
             Film film = new Film();
@@ -82,7 +82,7 @@ public class FilmDbStorage implements FilmStorage {
             film.setReleaseDate(filmRows.getDate("releaseDate").toLocalDate());
             film.setDuration(filmRows.getInt("duration"));
             film.setGenre(filmRows.getString("genre"));
-            film.setMpa_rating(filmRows.getString("mpa_rating"));
+            film.setMpaRatingId(filmRows.getLong("mpaRatingId"));
             films.add(film);
 
         }
@@ -91,7 +91,7 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Film getFilById(Long filmId) {
-        SqlRowSet filmRows = jdbcTemplate.queryForRowSet("select* from film where id = ?", filmId);
+        SqlRowSet filmRows = jdbcTemplate.queryForRowSet("select * from films where film_id = ?", filmId);
 
         if (filmRows.next()) {
 
@@ -102,7 +102,7 @@ public class FilmDbStorage implements FilmStorage {
             film.setReleaseDate(filmRows.getDate("releaseDate").toLocalDate());
             film.setDuration(filmRows.getInt("duration"));
             film.setGenre(filmRows.getString("genre"));
-            film.setMpa_rating(filmRows.getString("mpa_rating"));
+            film.setMpaRatingId(filmRows.getLong("mpaRatingId"));
 
             log.info("Найден фильм: {} {}", film.getId(), film.getName());
 

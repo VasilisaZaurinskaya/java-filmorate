@@ -65,15 +65,15 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public List<Friend> getFriendList(Long userId) {
-        List<Friend> friendList = new ArrayList<>();
+    public List<User> getFriendList(Long userId) {
+        List<User> friendList = new ArrayList<>();
         User user = getUserbyId(userId);
         for (Long friendId : user.getFriends()) {
             User friendUser = getUserbyId(friendId);
             Friend friend = new Friend();
-            friend.setUser(friendUser);
+            friend.setFriend(friendUser);
             friend.setFriendshipStatus("подтверждённая");
-            friendList.add(friend);
+            friendList.add(friendUser);
         }
         return friendList;
     }
@@ -97,9 +97,10 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User createFriend(User user) {
-        return null;
+    public void createFriend(User user, User friend) {
+        throw new UnsupportedOperationException();
     }
+
 
     @Override
     public void deleteFriend(Long id, Long friendId) {
