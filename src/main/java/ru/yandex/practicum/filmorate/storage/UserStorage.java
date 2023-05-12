@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.storage;
 
-import ru.yandex.practicum.filmorate.model.Friend;
-import ru.yandex.practicum.filmorate.model.Like;
+
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.List;

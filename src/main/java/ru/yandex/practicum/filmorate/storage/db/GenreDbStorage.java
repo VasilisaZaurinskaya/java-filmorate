@@ -26,16 +26,6 @@ public class GenreDbStorage implements GenreStorage {
 
 
     @Override
-    public Genre createGenre(Genre genre) {
-        return null;
-    }
-
-    @Override
-    public User updateGenre(Genre genre) {
-        return null;
-    }
-
-    @Override
     public List<Genre> getAllGenres() {
         String sql = "select * from genres order by genre_id";
         SqlRowSet genreRows = jdbcTemplate.queryForRowSet(sql);
