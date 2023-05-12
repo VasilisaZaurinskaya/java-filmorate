@@ -49,6 +49,21 @@ public class InMemoryFilmStorage implements FilmStorage {
         return filmStorage.get(filmId);
     }
 
+    @Override
+    public void addLike(Long filmId, Long userId) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public List<Film> getMostPopularFilms(Integer count) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void removeLike(Long filmId, Long userId) {
+        throw new UnsupportedOperationException();
+    }
+
     public long getMaxId() {
         long maxId = 0;
         for (long id : filmStorage.keySet()) {

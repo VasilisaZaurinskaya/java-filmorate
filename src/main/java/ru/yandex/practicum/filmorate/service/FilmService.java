@@ -12,7 +12,6 @@ import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -65,12 +64,7 @@ public class FilmService {
             throw new NotFoundException("Не найден фильм с указанным id");
         }
 
-        user.getLikedFilms().add(filmId);
-        film.getUsersWhoLiked().add(userId);
-
-        userStorage.updateUser(user);
-        filmStorage.updateFilm(film);
-
+        filmStorage.addLike(filmId, userId);
     }
 
     public void removeLike(Long userId, Long filmId) {
@@ -87,26 +81,11 @@ public class FilmService {
             throw new NotFoundException("Не найден фильм с указанным id");
         }
 
-        user.getLikedFilms().remove(filmId);
-        film.getUsersWhoLiked().remove(userId);
-
-        userStorage.updateUser(user);
-        filmStorage.updateFilm(film);
-
+        filmStorage.removeLike(filmId, userId);
     }
 
-    public List<Film> getMostPopularFilms(Long count) {
-        List<Film> topFilms = filmStorage.getAllFilms();
-        topFilms.sort((o1, o2) -> o2.getUsersWhoLiked().size() - o1.getUsersWhoLiked().size());
-        List<Film> result = new ArrayList<>();
-        Long topFilmsSize = topFilms.size() < count
-                ? topFilms.size()
-                : count;
-        for (int i = 0; i < topFilmsSize; i++) {
-            result.add(topFilms.get(i));
-        }
-
-        return result;
+    public List<Film> getMostPopularFilms(Integer count) {
+        return filmStorage.getMostPopularFilms(count);
     }
 
     public void validateUserAndFilm(Long userId, Long filmId) {

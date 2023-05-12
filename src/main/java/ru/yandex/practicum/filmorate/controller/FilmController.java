@@ -69,10 +69,10 @@ public class FilmController {
 
     @GetMapping("/popular")
     public @ResponseBody List<Film> getMostPopularFilms(
-            @PathParam(value = "count") Long count
+            @PathParam(value = "count") Integer count
     ) {
         if (count == null) {
-            count = 10L;
+            count = 10;
         }
         return filmService.getMostPopularFilms(count);
     }
