@@ -25,7 +25,6 @@ public class FilmController {
     @Autowired
     public FilmController(FilmService filmService) {
         this.filmService = filmService;
-
     }
 
     @GetMapping("/{filmId}")
@@ -35,17 +34,12 @@ public class FilmController {
 
     @PostMapping
     public @ResponseBody Film create(@RequestBody Film film) throws ValidateException {
-
-        filmService.createFilm(film, this);
-        return film;
+        return filmService.createFilm(film, this);
     }
 
     @PutMapping
     public @ResponseBody Film update(@RequestBody Film film) throws ValidateException {
-
-
         return filmService.updateFilm(film);
-
     }
 
 
@@ -82,6 +76,4 @@ public class FilmController {
         }
         return filmService.getMostPopularFilms(count);
     }
-
-
 }

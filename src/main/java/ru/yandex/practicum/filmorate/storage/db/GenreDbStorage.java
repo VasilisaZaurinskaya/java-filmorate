@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.GenreStorage;
 
 import java.util.ArrayList;
@@ -25,13 +26,23 @@ public class GenreDbStorage implements GenreStorage {
 
 
     @Override
+    public Genre createGenre(Genre genre) {
+        return null;
+    }
+
+    @Override
+    public User updateGenre(Genre genre) {
+        return null;
+    }
+
+    @Override
     public List<Genre> getAllGenres() {
         String sql = "select * from genres order by genre_id";
         SqlRowSet genreRows = jdbcTemplate.queryForRowSet(sql);
         ArrayList<Genre> genres = new ArrayList<Genre>();
         while (genreRows.next()) {
             Genre genre = new Genre();
-            genre.setId(genreRows.getLong("id"));
+            genre.setId(genreRows.getLong("genre_id"));
             genre.setName(genreRows.getString("name"));
             genres.add(genre);
         }
@@ -46,7 +57,7 @@ public class GenreDbStorage implements GenreStorage {
         if (genreRows.next()) {
 
             Genre genre = new Genre();
-            genre.setId(genreRows.getLong("id"));
+            genre.setId(genreRows.getLong("genre_id"));
             genre.setName(genreRows.getString("name"));
 
             log.info("Найден жанр: {} {}", genre.getId(), genre.getName());
