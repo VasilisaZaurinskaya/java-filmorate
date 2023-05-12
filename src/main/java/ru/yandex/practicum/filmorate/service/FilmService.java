@@ -43,7 +43,7 @@ public class FilmService {
 
     }
 
-    public Optional<Film> getFilmById(Long filmId) {
+    public Film getFilmById(Long filmId) {
         if (filmStorage.getFilById(filmId) == null) {
             log.error("Фильм не может быть равен null");
             throw new NotFoundException("Фильм не может быть равен null");
@@ -54,7 +54,7 @@ public class FilmService {
 
     public void setLike(Long userId, Long filmId) {
 
-        Optional<User> user = userStorage.getUserbyId(userId);
+        User user = userStorage.getUserbyId(userId);
         Film film = filmStorage.getFilById(filmId);
 
         if (user == null) {
@@ -76,7 +76,7 @@ public class FilmService {
 
     public void removeLike(Long userId, Long filmId) {
 
-        Optional<User> user = userStorage.getUserbyId(userId);
+        User user = userStorage.getUserbyId(userId);
         Film film = filmStorage.getFilById(filmId);
 
         if (user == null) {

@@ -11,22 +11,21 @@ import ru.yandex.practicum.filmorate.storage.UserStorage;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Component
 public class InMemoryUserStorage implements UserStorage {
-    protected HashMap<Long, Optional<User>> userStorage = new HashMap<>();
+    protected HashMap<Long, User> userStorage = new HashMap<>();
 
     @Override
-    public Optional<User> createUser(Optional<User> user) {
+    public User createUser(User user) {
         user.setId(generateNewId());
         userStorage.put(user.getId(), user);
         return user;
     }
 
     @Override
-    public Optional<User> updateUser(Optional<User> user) {
+    public User updateUser(User user) {
         if (user.getId() == null) {
             log.error("id  не может быть null");
             throw new ValidateException("id  не может быть null");
@@ -78,4 +77,50 @@ public class InMemoryUserStorage implements UserStorage {
         }
         return friendList;
     }
+
+    @Override
+    public List<User> getMitualFriends(Long id, Long otherId) {
+
+        List<Long> sharedFriendsIds = new ArrayList<>();
+        List<User> sharedFriendsList = new ArrayList<>();
+
+        User user = getUserbyId(id);
+        User friend = getUserbyId(otherId);
+
+        sharedFriendsIds.addAll(user.getFriends());
+        sharedFriendsIds.retainAll(friend.getFriends());
+
+        for (Long sharedFriendId : sharedFriendsIds) {
+            sharedFriendsList.add(getUserbyId(sharedFriendId));
+        }
+        return sharedFriendsList;
+    }
+
+    @Override
+    public User createFriend(User user) {
+        return null;
+    }
+
+    @Override
+    public void deleteFriend(Long id, Long friendId) {
+        User user = getUserbyId(id);
+        User userFriend = getUserbyId(friendId);
+
+        if (user == null) {
+            log.error("Не найден пользователь с id = {}", id);
+            throw new ValidateException("Не найден пользователь с указанным id");
+        }
+        if (userFriend == null) {
+            log.error("Не найден пользователь с id = {}", friendId);
+            throw new ValidateException("Не найден пользователь с указанным id");
+        }
+
+        user.getFriends().remove(friendId);
+        userFriend.getFriends().remove(id);
+
+        updateUser(user);
+        updateUser(userFriend);
+
+    }
+
 }

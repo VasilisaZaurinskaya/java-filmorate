@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.storage.db;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
@@ -10,10 +11,11 @@ import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+
 
 @Component
 @Slf4j
+@Primary
 public class FilmDbStorage implements FilmStorage {
 
     private final JdbcTemplate jdbcTemplate;
@@ -88,7 +90,7 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public Optional<Film> getFilById(Long filmId) {
+    public Film getFilById(Long filmId) {
         SqlRowSet filmRows = jdbcTemplate.queryForRowSet("select* from film where id = ?", filmId);
 
         if (filmRows.next()) {
@@ -104,10 +106,10 @@ public class FilmDbStorage implements FilmStorage {
 
             log.info("Найден фильм: {} {}", film.getId(), film.getName());
 
-            return Optional.of(film);
+            return film;
         } else {
             log.info("Пользователь с идентификатором {} не найден.", filmId);
-            return Optional.empty();
+            return null;
         }
     }
 }
