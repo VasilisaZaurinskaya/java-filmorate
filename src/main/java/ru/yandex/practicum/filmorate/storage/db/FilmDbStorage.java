@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.sql.Date;
@@ -65,7 +66,7 @@ public class FilmDbStorage implements FilmStorage {
 
         List<Genre> currentFilmGenres = getGenresForFilm(filmId);
         List<Long> addedGenreIds = new ArrayList<>(genres.size());
-        for (Genre filmGenre :currentFilmGenres) {
+        for (Genre filmGenre : currentFilmGenres) {
             addedGenreIds.add(filmGenre.getId());
         }
 
@@ -120,9 +121,10 @@ public class FilmDbStorage implements FilmStorage {
     public List<Film> getAllFilms() {
         SqlRowSet filmRows = jdbcTemplate.queryForRowSet("select f.*, mr.name mpa_name, mr.description mpa_description" +
                 " from films as f " +
-                "left join mpa_rating as mr  on mr.mpa_rating_id  = f.mpa_rating_id ");
+                "join mpa_rating as mr  on mr.mpa_rating_id  = f.mpa_rating_id ");
         ArrayList<Film> films = new ArrayList<Film>();
         while (filmRows.next()) {
+            Mpa mpa = new Mpa();
             Film film = new Film();
             film.setId(filmRows.getLong("film_id"));
             film.setName(filmRows.getString("name"));
@@ -131,7 +133,10 @@ public class FilmDbStorage implements FilmStorage {
             film.setReleaseDate(releaseDateField != null ? releaseDateField.toLocalDate() : null);
             film.setDuration(filmRows.getInt("duration"));
             film.setGenres(getGenresForFilm(film.getId()));
-            film.setMpa(mpaDbStorage.getMpaById(filmRows.getInt("mpa_rating_id")));
+            mpa.setId(filmRows.getInt("mpa_rating_id"));
+            mpa.setName(filmRows.getString("MPA_NAME"));
+            mpa.setDescription(filmRows.getString("MPA_DESCRIPTION"));
+            film.setMpa(mpa);
             films.add(film);
 
         }
@@ -141,8 +146,11 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Film getFilmById(Long filmId) {
-        SqlRowSet filmRows = jdbcTemplate.queryForRowSet("select f.*, mr.name mpa_name, mr.description mpa_description from films as f left join mpa_rating as mr  on mr.mpa_rating_id  = f.mpa_rating_id where f.film_id = ?", filmId);
-
+        SqlRowSet filmRows = jdbcTemplate.queryForRowSet("select f.*, mr.name mpa_name, mr.description mpa_description " +
+                "from films as f" +
+                "  join mpa_rating as mr " +
+                " on mr.mpa_rating_id  = f.mpa_rating_id where f.film_id = ?", filmId);
+        Mpa mpa = new Mpa();
         if (filmRows.next()) {
 
             Film film = new Film();
@@ -153,7 +161,10 @@ public class FilmDbStorage implements FilmStorage {
             film.setReleaseDate(releaseDateField != null ? releaseDateField.toLocalDate() : null);
             film.setDuration(filmRows.getInt("duration"));
             film.setGenres(getGenresForFilm(film.getId()));
-            film.setMpa(mpaDbStorage.getMpaById(filmRows.getInt("mpa_rating_id")));
+            mpa.setId(filmRows.getInt("mpa_rating_id"));
+            mpa.setName(filmRows.getString("MPA_NAME"));
+            mpa.setDescription(filmRows.getString("MPA_DESCRIPTION"));
+            film.setMpa(mpa);
 
             log.info("Найден фильм: {} {}", film.getId(), film.getName());
 
