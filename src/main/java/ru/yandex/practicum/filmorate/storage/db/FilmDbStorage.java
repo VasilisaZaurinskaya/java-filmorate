@@ -118,7 +118,9 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public List<Film> getAllFilms() {
-        SqlRowSet filmRows = jdbcTemplate.queryForRowSet("select * from films");
+        SqlRowSet filmRows = jdbcTemplate.queryForRowSet("select f.*, mr.name mpa_name, mr.description mpa_description" +
+                " from films as f " +
+                "left join mpa_rating as mr  on mr.mpa_rating_id  = f.mpa_rating_id ");
         ArrayList<Film> films = new ArrayList<Film>();
         while (filmRows.next()) {
             Film film = new Film();
@@ -139,7 +141,7 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Film getFilmById(Long filmId) {
-        SqlRowSet filmRows = jdbcTemplate.queryForRowSet("select * from films where film_id = ?", filmId);
+        SqlRowSet filmRows = jdbcTemplate.queryForRowSet("select f.*, mr.name mpa_name, mr.description mpa_description from films as f left join mpa_rating as mr  on mr.mpa_rating_id  = f.mpa_rating_id where f.film_id = ?", filmId);
 
         if (filmRows.next()) {
 

@@ -27,12 +27,6 @@ public class UserDbStorage implements UserStorage {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    /**
-     * https://www.baeldung.com/spring-jdbc-jdbctemplate#1-simplejdbcinsert
-     *
-     * @param user
-     * @return
-     */
     @Override
     public User createUser(User user) {
 
