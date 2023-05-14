@@ -9,8 +9,8 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
+
 
 @Service
 @Slf4j
@@ -65,61 +65,20 @@ public class UserService {
             throw new NotFoundException("Не найден пользователь с указанным id");
         }
 
-        user.getFriends().add(friendId);
-        userFriend.getFriends().add(id);
-
-        userStorage.updateUser(user);
-        userStorage.updateUser(userFriend);
-
+        userStorage.createFriend(user, userFriend);
     }
 
     public void deleteFriend(Long id, Long friendId) {
-
-        User user = userStorage.getUserbyId(id);
-        User userFriend = userStorage.getUserbyId(friendId);
-
-        if (user == null) {
-            log.error("Не найден пользователь с id = {}", id);
-            throw new ValidateException("Не найден пользователь с указанным id");
-        }
-        if (userFriend == null) {
-            log.error("Не найден пользователь с id = {}", friendId);
-            throw new ValidateException("Не найден пользователь с указанным id");
-        }
-
-        user.getFriends().remove(friendId);
-        userFriend.getFriends().remove(id);
-
-        userStorage.updateUser(user);
-        userStorage.updateUser(userFriend);
+        userStorage.deleteFriend(id, friendId);
 
     }
 
     public List<User> getFriendList(Long userId) {
-        List<User> friendList = new ArrayList<>();
-        User user = userStorage.getUserbyId(userId);
-        for (Long friendId : user.getFriends()) {
-            User friend = userStorage.getUserbyId(friendId);
-            friendList.add(friend);
-        }
-        return friendList;
+        return userStorage.getFriendList(userId);
     }
 
     public List<User> getMitualFriends(Long id, Long otherId) {
-
-        List<Long> sharedFriendsIds = new ArrayList<>();
-        List<User> sharedFriendsList = new ArrayList<>();
-
-        User user = userStorage.getUserbyId(id);
-        User friend = userStorage.getUserbyId(otherId);
-
-        sharedFriendsIds.addAll(user.getFriends());
-        sharedFriendsIds.retainAll(friend.getFriends());
-
-        for (Long sharedFriendId : sharedFriendsIds) {
-            sharedFriendsList.add(userStorage.getUserbyId(sharedFriendId));
-        }
-        return sharedFriendsList;
+        return userStorage.getMitualFriends(id, otherId);
     }
 
     public void validateAddFriend(Long id, Long friendId) throws ValidateException {

@@ -12,7 +12,6 @@ import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -43,18 +42,18 @@ public class FilmService {
     }
 
     public Film getFilmById(Long filmId) {
-        if (filmStorage.getFilById(filmId) == null) {
+        if (filmStorage.getFilmById(filmId) == null) {
             log.error("Фильм не может быть равен null");
             throw new NotFoundException("Фильм не может быть равен null");
         } else {
-            return filmStorage.getFilById(filmId);
+            return filmStorage.getFilmById(filmId);
         }
     }
 
     public void setLike(Long userId, Long filmId) {
 
         User user = userStorage.getUserbyId(userId);
-        Film film = filmStorage.getFilById(filmId);
+        Film film = filmStorage.getFilmById(filmId);
 
         if (user == null) {
             log.error("Не найден пользователь с id = {}", userId);
@@ -65,18 +64,13 @@ public class FilmService {
             throw new NotFoundException("Не найден фильм с указанным id");
         }
 
-        user.getLikedFilms().add(filmId);
-        film.getUsersWhoLiked().add(userId);
-
-        userStorage.updateUser(user);
-        filmStorage.updateFilm(film);
-
+        filmStorage.addLike(filmId, userId);
     }
 
     public void removeLike(Long userId, Long filmId) {
 
         User user = userStorage.getUserbyId(userId);
-        Film film = filmStorage.getFilById(filmId);
+        Film film = filmStorage.getFilmById(filmId);
 
         if (user == null) {
             log.error("Не найден пользователь с id = {}", userId);
@@ -87,26 +81,11 @@ public class FilmService {
             throw new NotFoundException("Не найден фильм с указанным id");
         }
 
-        user.getLikedFilms().remove(filmId);
-        film.getUsersWhoLiked().remove(userId);
-
-        userStorage.updateUser(user);
-        filmStorage.updateFilm(film);
-
+        filmStorage.removeLike(filmId, userId);
     }
 
-    public List<Film> getMostPopularFilms(Long count) {
-        List<Film> topFilms = filmStorage.getAllFilms();
-        topFilms.sort((o1, o2) -> o2.getUsersWhoLiked().size() - o1.getUsersWhoLiked().size());
-        List<Film> result = new ArrayList<>();
-        Long topFilmsSize = topFilms.size() < count
-                ? topFilms.size()
-                : count;
-        for (int i = 0; i < topFilmsSize; i++) {
-            result.add(topFilms.get(i));
-        }
-
-        return result;
+    public List<Film> getMostPopularFilms(Integer count) {
+        return filmStorage.getMostPopularFilms(count);
     }
 
     public void validateUserAndFilm(Long userId, Long filmId) {

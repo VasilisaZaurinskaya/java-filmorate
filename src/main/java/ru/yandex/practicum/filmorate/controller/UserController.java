@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.service.UserService;
 
 import java.util.List;
 
+
 @RestController
 @RequestMapping("/users")
 @Slf4j
@@ -76,4 +77,5 @@ public class UserController {
     ) {
         return userService.getMitualFriends(id, otherId);
     }
+
 }

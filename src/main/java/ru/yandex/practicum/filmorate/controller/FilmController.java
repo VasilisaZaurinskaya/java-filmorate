@@ -8,6 +8,7 @@ import ru.yandex.practicum.filmorate.exception.ValidateException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
+
 import javax.websocket.server.PathParam;
 
 
@@ -33,17 +34,12 @@ public class FilmController {
 
     @PostMapping
     public @ResponseBody Film create(@RequestBody Film film) throws ValidateException {
-
-        filmService.createFilm(film, this);
-        return film;
+        return filmService.createFilm(film, this);
     }
 
     @PutMapping
     public @ResponseBody Film update(@RequestBody Film film) throws ValidateException {
-
-
         return filmService.updateFilm(film);
-
     }
 
 
@@ -73,13 +69,11 @@ public class FilmController {
 
     @GetMapping("/popular")
     public @ResponseBody List<Film> getMostPopularFilms(
-            @PathParam(value = "count") Long count
+            @PathParam(value = "count") Integer count
     ) {
         if (count == null) {
-            count = 10L;
+            count = 10;
         }
         return filmService.getMostPopularFilms(count);
     }
-
-
 }
