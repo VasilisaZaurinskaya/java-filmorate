@@ -48,3 +48,43 @@ databaseChangeLog:
                 (4,'Триллер'),
                 (5,'Документальный'),
                 (6,'Боевик');
+  - changeSet:
+      id: create-schema
+      author: V_A_ZAUTINSKAYA
+      changes:
+        - sqlFile:
+            encoding: UTF-8
+            relativeToChangelogFile: true
+            path: sql/schema.sql
+  - changeSet:
+      id: create-schema
+      author: V_A_ZAUTINSKAYA
+      changes:
+        - sqlFile:
+            encoding: UTF-8
+            relativeToChangelogFile: true
+            path: sql/schema.sql
+  - changeSet:
+      id: create-schema
+      author: V_A_ZAUTINSKAYA
+      changes:
+        - sqlFile:
+            encoding: UTF-8
+            relativeToChangelogFile: true
+            path: sql/add_director.sql
+    - changeSet:
+      id: create-schema
+      author: V_A_ZAUTINSKAYA
+      changes:
+        - sqlFile:
+            encoding: UTF-8
+            relativeToChangelogFile: true
+            path: sql/add_reviews.sql
+    - changeSet:
+      id: create-schema
+      author: V_A_ZAUTINSKAYA
+      changes:
+        - sqlFile:
+            encoding: UTF-8
+            relativeToChangelogFile: true
+            path: sql/films_director.sql
