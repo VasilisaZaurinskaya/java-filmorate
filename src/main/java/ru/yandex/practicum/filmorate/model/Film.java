@@ -19,9 +19,14 @@ public class Film {
 
     private Mpa mpa;
     private Set<Long> usersWhoLiked = new HashSet<>();
+    private List<Director> directors;
 
-    public Film(Long id, String name, String description, LocalDate releaseDate, Integer duration,
-                List<Genre> genres, Mpa mpaRatingId) {
+    public Film(
+            Long id, String name, String description,
+            LocalDate releaseDate, Integer duration,
+            List<Genre> genres, Mpa mpaRatingId,
+            List<Director> directors
+    ) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -29,7 +34,7 @@ public class Film {
         this.duration = duration;
         this.genres = genres;
         this.mpa = mpaRatingId;
-
+        this.directors = directors;
     }
 
     public Film() {
