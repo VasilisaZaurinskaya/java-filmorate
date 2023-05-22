@@ -254,7 +254,7 @@ public class FilmDbStorage implements FilmStorage {
         sqlQuery.add(
             "SELECT f.*, count(l.user_id) AS likes, EXTRACT(YEAR FROM (f.release_date)) AS sort_by_year " +
             "FROM films AS f " +
-            "LEFT OUTER JOIN film_directors AS fd ON f.film_id = fd.film_id " +
+            "LEFT OUTER JOIN films_director AS fd ON f.film_id = fd.film_id " +
             "LEFT OUTER JOIN likes AS l ON l.film_id = f.film_id " +
             "WHERE fd.director_id = " + directorId + " " +
             "GROUP BY f.film_id"

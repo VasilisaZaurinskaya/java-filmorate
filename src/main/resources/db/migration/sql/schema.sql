@@ -1,4 +1,4 @@
-drop table if exists genre_film, films, users, friends, likes, genres, status_friendship;
+drop table if exists genre_film, films, users, friends, likes, genres, status_friendship CASCADE;
 
 CREATE TABLE IF NOT EXISTS films
 (

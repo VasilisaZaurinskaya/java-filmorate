@@ -89,7 +89,7 @@ public class DirectorDbStorage implements DirectorStorage {
     @Override
     public String delete(Long directorId) {
         log.info("Удаление режиссера с id = {}", directorId);
-        String sqlQuery = "DELETE FROM film_directors WHERE director_id = ?; " +
+        String sqlQuery = "DELETE FROM films_director WHERE director_id = ?; " +
             "DELETE FROM directors WHERE director_id = " + directorId;
 
         return jdbcTemplate.update(sqlQuery, directorId) > 0 ? "Режиссер удален" : "Ошибка при удалении";
@@ -99,7 +99,7 @@ public class DirectorDbStorage implements DirectorStorage {
     public void addFilm(LinkedHashSet<Director> directors, Long filmId) {
         log.info("Добавление режиссеров фильму с id = {}", filmId);
         StringJoiner stringJoiner = new StringJoiner(" ");
-        stringJoiner.add("INSERT INTO film_directors (film_id, director_id) VALUES");
+        stringJoiner.add("INSERT INTO films_director (film_id, director_id) VALUES");
 
         directors.forEach(d -> stringJoiner.add(String.format("(%s, %s),", filmId, d.getId())));
 
@@ -110,7 +110,7 @@ public class DirectorDbStorage implements DirectorStorage {
 
     @Override
     public void deleteFilm(Long filmId) {
-        String sqlQuery = "DELETE FROM film_directors WHERE film_id = ?";
+        String sqlQuery = "DELETE FROM films_director WHERE film_id = ?";
 
         jdbcTemplate.update(sqlQuery, filmId);
     }
@@ -119,7 +119,7 @@ public class DirectorDbStorage implements DirectorStorage {
     public LinkedHashSet<Director>  getDirectorsByFilm(Long filmId) {
         log.info("Получение режиссеров фильма с id = {}", filmId);
         String sqlQuery = "SELECT d.* FROM directors AS d " +
-            "LEFT OUTER JOIN film_directors AS fd ON fd.director_id = d.director_id " +
+            "LEFT OUTER JOIN films_director AS fd ON fd.director_id = d.director_id " +
             "WHERE fd.film_id = ?";
 
         return new LinkedHashSet<>(jdbcTemplate.query(sqlQuery, this::mapRowToDirector, filmId));
