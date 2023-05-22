@@ -1,0 +1,31 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-schema
+      author: V_A_ZAUTINSKAYA
+      changes:
+        - sqlFile:
+            encoding: UTF-8
+            relativeToChangelogFile: true
+            path: sql/schema.sql
+  - changeSet:
+      id: film_mpa_rating
+      author: V_A_ZAUTINSKAYA
+      changes:
+        - sql: MERGE INTO mpa_rating KEY(mpa_rating_id)
+                VALUES (1,'G','у фильма нет возрастных ограничений'),
+                (2,'PG','детям до 13 лет просмотр не желателен'),
+                (3,'PG-13','детям до 13 лет просмотр не желателен'),
+                (4,'R','лицам до 17 лет просматривать фильм можно только в присутствии взрослого'),
+                (5,'NC-17','лицам до 18 лет просмотр запрещён');
+
+  - changeSet:
+      id: film_genres
+      author: V_A_ZAUTINSKAYA
+      changes:
+        - sql: MERGE INTO genres KEY(genre_id)
+                VALUES (1,'Комедия'),
+                (2,'Драма'),
+                (3,'Мультфильм'),
+                (4,'Триллер'),
+                (5,'Документальный'),
+                (6,'Боевик');
