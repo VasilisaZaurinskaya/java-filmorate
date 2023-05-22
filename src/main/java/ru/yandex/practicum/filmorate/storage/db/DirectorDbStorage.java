@@ -16,8 +16,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.StringJoiner;
 
 @Component
 @Slf4j
@@ -40,7 +42,7 @@ public class DirectorDbStorage implements DirectorStorage {
 
     @Override
     public Director findById(Long id) {
-        String sqlQuery = "SELECT * FROM directors WHERE id = ?";
+        String sqlQuery = "SELECT * FROM directors WHERE director_id = ?";
         log.info("Получение списка режиссера с id = {}", id);
 
         try {
@@ -75,18 +77,58 @@ public class DirectorDbStorage implements DirectorStorage {
 
     @Override
     public Director update(Director director) {
+        log.info("Обновление режиссера с id = {}", director.getId());
         findById(director.getId());
 
-        String sqlQuery = "UPDATE directors SET name = ? WHERE id = ?";
+        String sqlQuery = "UPDATE directors SET name = ? WHERE director_id = ?";
         jdbcTemplate.update(sqlQuery, director.getName(), director.getId());
 
         return director;
     }
 
+    @Override
+    public String delete(Long directorId) {
+        log.info("Удаление режиссера с id = {}", directorId);
+        String sqlQuery = "DELETE FROM film_directors WHERE director_id = ?; " +
+            "DELETE FROM directors WHERE director_id = " + directorId;
+
+        return jdbcTemplate.update(sqlQuery, directorId) > 0 ? "Режиссер удален" : "Ошибка при удалении";
+    }
+
+    @Override
+    public void addFilm(LinkedHashSet<Director> directors, Long filmId) {
+        log.info("Добавление режиссеров фильму с id = {}", filmId);
+        StringJoiner stringJoiner = new StringJoiner(" ");
+        stringJoiner.add("INSERT INTO film_directors (film_id, director_id) VALUES");
+
+        directors.forEach(d -> stringJoiner.add(String.format("(%s, %s),", filmId, d.getId())));
+
+        String sqlQuery = stringJoiner.toString();
+
+        jdbcTemplate.update(sqlQuery.substring(0, sqlQuery.length() - 1));
+    }
+
+    @Override
+    public void deleteFilm(Long filmId) {
+        String sqlQuery = "DELETE FROM film_directors WHERE film_id = ?";
+
+        jdbcTemplate.update(sqlQuery, filmId);
+    }
+
+    @Override
+    public LinkedHashSet<Director>  getDirectorsByFilm(Long filmId) {
+        log.info("Получение режиссеров фильма с id = {}", filmId);
+        String sqlQuery = "SELECT d.* FROM directors AS d " +
+            "LEFT OUTER JOIN film_directors AS fd ON fd.director_id = d.director_id " +
+            "WHERE fd.film_id = ?";
+
+        return new LinkedHashSet<>(jdbcTemplate.query(sqlQuery, this::mapRowToDirector, filmId));
+    }
+
     private Director mapRowToDirector(ResultSet resultSet, int rowNum) throws SQLException {
         return Director
                 .builder()
-                .id(resultSet.getLong("id"))
+                .id(resultSet.getLong("director_id"))
                 .name(resultSet.getString("name"))
                 .build();
     }

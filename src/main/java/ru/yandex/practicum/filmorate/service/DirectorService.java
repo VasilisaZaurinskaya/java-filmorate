@@ -7,7 +7,6 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.storage.db.DirectorDbStorage;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -38,5 +37,9 @@ public class DirectorService {
 
     public Director update(Director director) {
         return directorStorage.update(director);
+    }
+
+    public String delete(Long id) {
+        return directorStorage.delete(id);
     }
 }
