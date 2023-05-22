@@ -13,6 +13,7 @@ import javax.websocket.server.PathParam;
 
 
 import java.util.List;
+import java.util.Optional;
 
 
 @RestController
@@ -34,7 +35,7 @@ public class FilmController {
 
     @PostMapping
     public @ResponseBody Film create(@RequestBody Film film) throws ValidateException {
-        return filmService.createFilm(film, this);
+        return filmService.createFilm(film);
     }
 
     @PutMapping
@@ -75,5 +76,10 @@ public class FilmController {
             count = 10;
         }
         return filmService.getMostPopularFilms(count);
+    }
+
+    @GetMapping("/director/{id}")
+    public @ResponseBody List<Film> getFilmsByDirector(@PathVariable Long id, @RequestParam Optional<String> sortBy) {
+        return filmService.findFilmsByDirector(id, sortBy);
     }
 }

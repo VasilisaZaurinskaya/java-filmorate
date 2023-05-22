@@ -3,7 +3,6 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.controller.FilmController;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidateException;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -13,6 +12,7 @@ import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -26,7 +26,7 @@ public class FilmService {
         this.userStorage = userStorage;
     }
 
-    public Film createFilm(Film film, FilmController filmController) {
+    public Film createFilm(Film film) {
         validateNewFilm(film);
         return filmStorage.createFilm(film);
     }
@@ -38,7 +38,6 @@ public class FilmService {
 
     public List<Film> getAllFilms() {
         return filmStorage.getAllFilms();
-
     }
 
     public Film getFilmById(Long filmId) {
@@ -88,6 +87,14 @@ public class FilmService {
         return filmStorage.getMostPopularFilms(count);
     }
 
+    public List<Film> findFilmsByDirector(Long id, Optional<String> sortBy) {
+        if (id < 0) {
+            throw new NotFoundException("id не может быть отрицательным");
+        }
+
+        return filmStorage.findFilmsByDirector(id, sortBy);
+    }
+
     public void validateUserAndFilm(Long userId, Long filmId) {
         if (userId == null || filmId == null) {
             log.error("Фильм или пользователь не указаны");
@@ -116,6 +123,4 @@ public class FilmService {
         }
 
     }
-
-
 }

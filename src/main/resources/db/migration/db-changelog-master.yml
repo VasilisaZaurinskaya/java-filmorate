@@ -7,6 +7,25 @@ databaseChangeLog:
             encoding: UTF-8
             relativeToChangelogFile: true
             path: sql/schema.sql
+
+  - changeSet:
+      id: directors
+      author: Bjeel
+      changes:
+        - sqlFile:
+            encoding: UTF-8
+            relativeToChangelogFile: true
+            path: sql/directors.sql
+
+  - changeSet:
+      id: films_director
+      author: Bjeel
+      changes:
+        - sqlFile:
+            encoding: UTF-8
+            relativeToChangelogFile: true
+            path: sql/films_director.sql
+
   - changeSet:
       id: film_mpa_rating
       author: V_A_ZAUTINSKAYA
