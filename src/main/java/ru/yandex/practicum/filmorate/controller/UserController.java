@@ -1,10 +1,13 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import ru.yandex.practicum.filmorate.exception.ValidateException;
 import lombok.extern.slf4j.Slf4j;
+import ru.yandex.practicum.filmorate.model.Feed;
 import ru.yandex.practicum.filmorate.model.User;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.service.FeedService;
 import ru.yandex.practicum.filmorate.service.UserService;
 
 import java.util.List;
@@ -13,14 +16,12 @@ import java.util.List;
 @RestController
 @RequestMapping("/users")
 @Slf4j
+@AllArgsConstructor
 public class UserController {
 
     private final UserService userService;
+    private final FeedService feedService;
 
-    @Autowired
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
 
     @GetMapping("/{id}")
     public @ResponseBody User getUserById(@PathVariable Long id) {
@@ -78,4 +79,8 @@ public class UserController {
         return userService.getMitualFriends(id, otherId);
     }
 
+    @GetMapping("/{userId}/feed")
+    public @ResponseBody List<Feed> getFeed(@PathVariable Long userId) {
+        return feedService.getFeedByUserId(userId);
+    }
 }

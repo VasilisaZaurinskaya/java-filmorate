@@ -1,7 +1,7 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidateException;
@@ -14,14 +14,12 @@ import java.util.List;
 
 @Service
 @Slf4j
+@AllArgsConstructor
 public class UserService {
 
     private final UserStorage userStorage;
+    private final FeedService feedService;
 
-    @Autowired
-    public UserService(UserStorage userStorage) {
-        this.userStorage = userStorage;
-    }
 
     public User getUserById(Long id) {
         if (userStorage.getUserbyId(id) == null) {
@@ -66,11 +64,26 @@ public class UserService {
         }
 
         userStorage.createFriend(user, userFriend);
+
+        feedService.addFriend(user, userFriend);
     }
 
     public void deleteFriend(Long id, Long friendId) {
-        userStorage.deleteFriend(id, friendId);
 
+        User user = userStorage.getUserbyId(id);
+        User userFriend = userStorage.getUserbyId(friendId);
+
+        if (user == null) {
+            log.error("Не найден пользователь с id = {}", id);
+            throw new NotFoundException("Не найден пользователь с указанным id");
+        }
+        if (userFriend == null) {
+            log.error("Не найден пользователь с id = {}", friendId);
+            throw new NotFoundException("Не найден пользователь с указанным id");
+        }
+
+        userStorage.deleteFriend(id, friendId);
+        feedService.deleteFriend(user, userFriend);
     }
 
     public List<User> getFriendList(Long userId) {
@@ -116,6 +129,7 @@ public class UserService {
             log.error("Не указаны параметры для удаления из друзей");
             throw new ValidateException("id не может быть равен null");
         }
+
 
     }
 

@@ -1,19 +1,20 @@
 package ru.yandex.practicum.filmorate.model;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Feeds {
-    private Long feedId;
-    private Long userId;
+public class Feed {
     private Long eventId;
-    private Long entityId;
+    private Long userId;
     private String eventType;
     private String operation;
+    private Long entityId;
     private Long timestamp;
 
 }

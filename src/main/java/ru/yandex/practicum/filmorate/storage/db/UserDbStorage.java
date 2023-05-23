@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.db;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
@@ -19,13 +20,9 @@ import java.util.Map;
 @Component
 @Slf4j
 @Primary
+@AllArgsConstructor
 public class UserDbStorage implements UserStorage {
     private final JdbcTemplate jdbcTemplate;
-
-    @Autowired
-    public UserDbStorage(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
 
     @Override
     public User createUser(User user) {
@@ -177,7 +174,6 @@ public class UserDbStorage implements UserStorage {
 
             Friend friend = new Friend();
             friend.setFriend(user);
-//            friend.setFriendshipStatus(friendRows.getString("friendship"));
 
             mitualFriends.add(user);
         }
