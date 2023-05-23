@@ -85,8 +85,7 @@ public class ReviewDbStorage implements ReviewStorage {
 
         try {
             return jdbcTemplate.queryForObject(sqlQuery, this::mapToReviewList, id);
-        }
-        catch (EmptyResultDataAccessException e) {
+        } catch (EmptyResultDataAccessException e) {
             log.info("Отзыв не найден");
             throw new NotFoundException("Отзыв не найден");
         }
