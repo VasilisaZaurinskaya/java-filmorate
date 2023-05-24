@@ -58,4 +58,23 @@ public class GenreDbStorage implements GenreStorage {
         }
 
     }
+
+    @Override
+    public  Long getGenreIdByName(String genreName){
+        String sql = "SELECT genre_id FROM genres WHERE name = ?";
+        SqlRowSet genreRows = jdbcTemplate.queryForRowSet(sql, genreName);
+
+        if (genreRows.next()) {
+            return genreRows.getLong("genre_id");
+        } else {
+            log.info("Жанр с именем {} не найден.", genreName);
+            return null;
+        }
+    }
+
+    @Override
+    public Long addGenre(Genre genre) {
+        String sql = "INSERT INTO genres (genre_id) " +  "SELECT ? " +  "WHERE NOT exists (SELECT * FROM genres WHERE name = ?)";
+        return jdbcTemplate.queryForObject(sql, Long.class, genre.getName());
+    }
 }
