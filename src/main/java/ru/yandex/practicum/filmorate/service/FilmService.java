@@ -11,8 +11,10 @@ import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -83,8 +85,8 @@ public class FilmService {
         filmStorage.removeLike(filmId, userId);
     }
 
-    public List<Film> getMostPopularFilms(Integer count) {
-        return filmStorage.getMostPopularFilms(count);
+    public List<Film> getMostPopularFilms(Integer count, Integer genreId, Integer year) {
+        return filmStorage.getMostPopularFilms(count, genreId, year);
     }
 
     public List<Film> findFilmsByDirector(Long id, Optional<String> sortBy) {
