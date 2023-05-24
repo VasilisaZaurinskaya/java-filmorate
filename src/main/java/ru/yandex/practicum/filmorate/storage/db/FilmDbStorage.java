@@ -270,7 +270,7 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public List<Film> getRecommendations(Integer userId) {
-        String RECOMMENDED_FILMS = "SELECT F.film_id, F.name AS film_name, " +
+        String recommendedFilms = "SELECT F.film_id, F.name AS film_name, " +
                 "F.description AS film_description, F.release_date, F.duration, F.mpa_rating_id, M.name AS rating_name, " +
                 "GROUP_CONCAT(G.name SEPARATOR ', ') AS genres " +
                 "FROM likes AS L " +
@@ -288,7 +288,7 @@ public class FilmDbStorage implements FilmStorage {
                 "                    LIMIT 1) " +
                 "GROUP BY F.film_id;";
 
-        return jdbcTemplate.query(RECOMMENDED_FILMS, new Object[]{userId, userId, userId}, (rs, rowNum) -> {
+        return jdbcTemplate.query(recommendedFilms, new Object[]{userId, userId, userId}, (rs, rowNum) -> {
             Film film = new Film();
             film.setId(rs.getLong("film_id"));
             film.setName(rs.getString("film_name"));
