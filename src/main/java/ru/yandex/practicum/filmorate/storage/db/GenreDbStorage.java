@@ -16,13 +16,13 @@ import java.util.List;
 @Component
 @Primary
 public class GenreDbStorage implements GenreStorage {
+
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired
     public GenreDbStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
-
 
     @Override
     public List<Genre> getAllGenres() {
@@ -60,7 +60,7 @@ public class GenreDbStorage implements GenreStorage {
     }
 
     @Override
-    public  Long getGenreIdByName(String genreName){
+    public Long getGenreIdByName(String genreName) {
         String sql = "SELECT genre_id FROM genres WHERE name = ?";
         SqlRowSet genreRows = jdbcTemplate.queryForRowSet(sql, genreName);
 
@@ -74,8 +74,8 @@ public class GenreDbStorage implements GenreStorage {
 
     @Override
     public Long addGenre(Genre genre) {
-        String sql = "INSERT INTO genres (genre_id) " +  "SELECT ? "
-                +  "WHERE NOT exists (SELECT * FROM genres WHERE name = ?)";
+        String sql = "INSERT INTO genres (genre_id) " + "SELECT ? "
+                + "WHERE NOT exists (SELECT * FROM genres WHERE name = ?)";
         return jdbcTemplate.queryForObject(sql, Long.class, genre.getName());
     }
 }
