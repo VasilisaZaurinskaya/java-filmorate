@@ -29,8 +29,8 @@ public class UserService {
 
     public User getUserById(Long id) {
         if (userStorage.getUserbyId(id) == null) {
-            log.error("Пользватель не может быть равен null");
-            throw new NotFoundException("Пользватель не может быть равен null");
+            log.error("Пользователь не может быть равен null");
+            throw new NotFoundException("Пользователь не может быть равен null");
         } else {
             return userStorage.getUserbyId(id);
         }
@@ -81,8 +81,8 @@ public class UserService {
         return userStorage.getFriendList(userId);
     }
 
-    public List<User> getMitualFriends(Long id, Long otherId) {
-        return userStorage.getMitualFriends(id, otherId);
+    public List<User> getMutualFriends(Long id, Long otherId) {
+        return userStorage.getMutualFriends(id, otherId);
     }
 
     public void validateAddFriend(Long id, Long friendId) throws ValidateException {
@@ -111,8 +111,6 @@ public class UserService {
             log.error("Неправильная дата рождения пользователя");
             throw new ValidateException("Неправильная дата рождения пользователя");
         }
-
-
     }
 
     public void validateUserFriend(Long id) {

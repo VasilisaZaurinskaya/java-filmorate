@@ -11,10 +11,7 @@ import ru.yandex.practicum.filmorate.model.*;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component
 @Slf4j
@@ -50,7 +47,7 @@ public class UserDbStorage implements UserStorage {
         if (getUserbyId(user.getId()) == null)
             throw new NotFoundException("Пользователь с идентификатором " + user.getId() + " не найден.");
         jdbcTemplate.update(
-                "update users set " +
+                "UPDATE users SET " +
                         "name = ?, login = ?, email = ?, birthday = ? " +
                         "where user_id = ?",
                 user.getName(),
@@ -64,7 +61,7 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public List<User> getAllUsers() {
-        SqlRowSet userRows = jdbcTemplate.queryForRowSet("select * from users");
+        SqlRowSet userRows = jdbcTemplate.queryForRowSet("SELECT * FROM users");
         ArrayList<User> users = new ArrayList<User>();
         while (userRows.next()) {
             User user = new User();
@@ -72,7 +69,7 @@ public class UserDbStorage implements UserStorage {
             user.setEmail(userRows.getString("email"));
             user.setName(userRows.getString("name"));
             user.setLogin(userRows.getString("login"));
-            user.setBirthday(userRows.getDate("birthday").toLocalDate());
+            user.setBirthday(Objects.requireNonNull(userRows.getDate("birthday")).toLocalDate());
             users.add(user);
 
         }
@@ -83,7 +80,7 @@ public class UserDbStorage implements UserStorage {
     @Override
     public User getUserbyId(Long id) {
 
-        SqlRowSet userRows = jdbcTemplate.queryForRowSet("select * from users where user_id = ?", id);
+        SqlRowSet userRows = jdbcTemplate.queryForRowSet("SELECT * FROM users WHERE user_id = ?", id);
 
         if (userRows.next()) {
 
@@ -92,7 +89,7 @@ public class UserDbStorage implements UserStorage {
             user.setName(userRows.getString("name"));
             user.setEmail(userRows.getString("email"));
             user.setLogin(userRows.getString("login"));
-            user.setBirthday(userRows.getDate("birthday").toLocalDate());
+            user.setBirthday(Objects.requireNonNull(userRows.getDate("birthday")).toLocalDate());
 
             log.info("Найден пользователь: {} {}", user.getId(), user.getName());
 
@@ -105,7 +102,7 @@ public class UserDbStorage implements UserStorage {
 
 
     public List<Map<String, Object>> getAllFriends() {
-        SqlRowSet friendRows = jdbcTemplate.queryForRowSet("select * from friends order by user_id");
+        SqlRowSet friendRows = jdbcTemplate.queryForRowSet("SELECT * FROM friends ORDER BY user_id");
         ArrayList<Map<String, Object>> friends = new ArrayList<>();
         while (friendRows.next()) {
             Map<String, Object> friend = new HashMap<>();
@@ -122,7 +119,8 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public List<User> getFriendList(Long userId) {
-        String sql = "select * from friends as f left join users as u on f.friend_id = u.user_id where f.user_id = ?";
+        String sql = "SELECT * FROM friends AS f LEFT JOIN users AS u ON f.friend_id = u.user_id " +
+                "WHERE f.user_id = ?";
         SqlRowSet friendRows = jdbcTemplate.queryForRowSet(sql, userId);
         ArrayList<User> friends = new ArrayList<User>();
         while (friendRows.next()) {
@@ -131,7 +129,7 @@ public class UserDbStorage implements UserStorage {
             user.setName(friendRows.getString("name"));
             user.setEmail(friendRows.getString("email"));
             user.setLogin(friendRows.getString("login"));
-            user.setBirthday(friendRows.getDate("birthday").toLocalDate());
+            user.setBirthday(Objects.requireNonNull(friendRows.getDate("birthday")).toLocalDate());
 
             Friend friend = new Friend();
             friend.setFriend(user);
@@ -158,30 +156,31 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public void deleteFriend(Long id, Long friendId) {
-        String sql = "delete from friends where friend_id = ? and user_id = ? ";
+        String sql = "DELETE FROM friends WHERE friend_id = ? AND user_id = ? ";
         jdbcTemplate.update(sql, friendId, id);
     }
 
     @Override
-    public List<User> getMitualFriends(Long id, Long otherId) {
-        String sql = "select * from users where user_id in (select f1.friend_id from friends AS f1 inner join friends AS f2 ON f1.friend_id = f2.friend_id where f1.user_id = ? AND f2.user_id = ?);";
+    public List<User> getMutualFriends(Long id, Long otherId) {
+        String sql = "SELECT * FROM users WHERE user_id IN (SELECT f1.friend_id FROM friends " +
+                "AS f1 INNER JOIN friends AS f2 ON f1.friend_id = f2.friend_id WHERE f1.user_id = ? " +
+                "AND f2.user_id = ?);";
         SqlRowSet friendRows = jdbcTemplate.queryForRowSet(sql, id, otherId);
-        ArrayList<User> mitualFriends = new ArrayList<User>();
+        ArrayList<User> mutualFriends = new ArrayList<User>();
         while (friendRows.next()) {
             User user = new User();
             user.setId(friendRows.getLong("user_id"));
             user.setName(friendRows.getString("name"));
             user.setEmail(friendRows.getString("email"));
             user.setLogin(friendRows.getString("login"));
-            user.setBirthday(friendRows.getDate("birthday").toLocalDate());
+            user.setBirthday(Objects.requireNonNull(friendRows.getDate("birthday")).toLocalDate());
 
             Friend friend = new Friend();
             friend.setFriend(user);
-//            friend.setFriendshipStatus(friendRows.getString("friendship"));
 
-            mitualFriends.add(user);
+            mutualFriends.add(user);
         }
-        return mitualFriends;
+        return mutualFriends;
 
     }
 }

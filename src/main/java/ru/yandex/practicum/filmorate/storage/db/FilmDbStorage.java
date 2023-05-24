@@ -48,7 +48,8 @@ public class FilmDbStorage implements FilmStorage {
         values.put("duration", film.getDuration());
         values.put("mpa_rating_id", film.getMpa().getId());
 
-        SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate).withTableName("films").usingGeneratedKeyColumns("film_id");
+        SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate).withTableName("films")
+                .usingGeneratedKeyColumns("film_id");
 
         Long filmId = simpleJdbcInsert.executeAndReturnKey(values).longValue();
 
@@ -92,7 +93,10 @@ public class FilmDbStorage implements FilmStorage {
             throw new NotFoundException("Фильм с идентификатором " + film.getId() + " не найден.");
         }
 
-        jdbcTemplate.update("update films set " + " name = ?," + " description = ?," + " release_date = ?," + " duration = ?," + " mpa_rating_id = ? " + "where film_id = ?", film.getName(), film.getDescription(), film.getReleaseDate(), film.getDuration(), film.getMpa().getId(), film.getId());
+        jdbcTemplate.update("UPDATE films SET " + " name = ?," + " description = ?,"
+                + " release_date = ?," + " duration = ?," + " mpa_rating_id = ? "
+                + "WHERE film_id = ?", film.getName(), film.getDescription(), film.getReleaseDate(),
+                film.getDuration(), film.getMpa().getId(), film.getId());
 
         deleteGenres(film.getId());
         addGenres(film.getId(), film.getGenres());
@@ -107,13 +111,14 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     private void deleteGenres(Long filmId) {
-        String sql = "delete from genre_film where film_id = ?";
+        String sql = "DELETE FROM genre_film WHERE film_id = ?";
         jdbcTemplate.update(sql, filmId);
     }
 
     @Override
     public List<Film> getAllFilms() {
-        SqlRowSet filmRows = jdbcTemplate.queryForRowSet("select f.*, mr.name mpa_name, mr.description mpa_description" + " from films as f " + "join mpa_rating as mr  on mr.mpa_rating_id  = f.mpa_rating_id ");
+        SqlRowSet filmRows = jdbcTemplate.queryForRowSet("SELECT f.*, mr.name mpa_name, mr.description mpa_description"
+                + " FROM films AS f " + "JOIN mpa_rating AS mr ON mr.mpa_rating_id  = f.mpa_rating_id ");
         ArrayList<Film> films = new ArrayList<>();
         while (filmRows.next()) {
             Mpa mpa = new Mpa();
@@ -139,7 +144,9 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Film getFilmById(Long filmId) {
-        SqlRowSet filmRows = jdbcTemplate.queryForRowSet("select f.*, mr.name mpa_name, mr.description mpa_description " + "from films as f" + "  join mpa_rating as mr " + " on mr.mpa_rating_id  = f.mpa_rating_id where f.film_id = ?", filmId);
+        SqlRowSet filmRows = jdbcTemplate.queryForRowSet("SELECT f.*, mr.name mpa_name, mr.description mpa_description "
+                + "FROM films AS f" + " JOIN mpa_rating AS mr " + " ON mr.mpa_rating_id  = f.mpa_rating_id " +
+                "WHERE f.film_id = ?", filmId);
         Mpa mpa = new Mpa();
         if (filmRows.next()) {
 
@@ -167,7 +174,8 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     public List<Genre> getGenresForFilm(Long filmId) {
-        String sql = "select * " + "from genres as g " + "join genre_film as gf on gf.genre_id = g.genre_id " + "where gf.film_id = ?";
+        String sql = "SELECT * " + "FROM genres AS g " + "JOIN genre_film AS gf ON gf.genre_id = g.genre_id "
+                + "WHERE gf.film_id = ?";
         SqlRowSet genreRows = jdbcTemplate.queryForRowSet(sql, filmId);
         ArrayList<Genre> genres = new ArrayList<>();
         while (genreRows.next()) {
@@ -199,7 +207,8 @@ public class FilmDbStorage implements FilmStorage {
             limit = 10;
         }
 
-        String sql = "select f.film_id " + "from films as f " + "left outer join likes as l on l.film_id = f.film_id " + "group by f.film_id " + "order by count(l.user_id) desc, f.film_id desc " + "limit ?";
+        String sql = "SELECT f.film_id " + "FROM films AS f " + "LEFT OUTER JOIN likes AS l ON l.film_id = f.film_id "
+                + "GROUP BY f.film_id " + "ORDER BY count(l.user_id) DESC, f.film_id DESC " + "LIMIT ?";
 
         SqlRowSet likesRows = jdbcTemplate.queryForRowSet(sql, limit);
         ArrayList<Film> mostPopularFilms = new ArrayList<>();
@@ -212,7 +221,7 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public void removeLike(Long filmId, Long userId) {
-        String sql = "delete from likes where film_id = ? and user_id = ? ";
+        String sql = "DELETE FROM likes WHERE film_id = ? AND user_id = ? ";
         jdbcTemplate.update(sql, filmId, userId);
     }
 
@@ -222,7 +231,10 @@ public class FilmDbStorage implements FilmStorage {
 
         StringJoiner sqlQuery = new StringJoiner(" ");
 
-        sqlQuery.add("SELECT f.*, count(l.user_id) AS likes, EXTRACT(YEAR FROM (f.release_date)) AS sort_by_year " + "FROM films AS f " + "LEFT OUTER JOIN films_director AS fd ON f.film_id = fd.film_id " + "LEFT OUTER JOIN likes AS l ON l.film_id = f.film_id " + "WHERE fd.director_id = " + directorId + " " + "GROUP BY f.film_id");
+        sqlQuery.add("SELECT f.*, count(l.user_id) AS likes, EXTRACT(YEAR FROM (f.release_date)) AS sort_by_year "
+                + "FROM films AS f " + "LEFT OUTER JOIN films_director AS fd ON f.film_id = fd.film_id "
+                + "LEFT OUTER JOIN likes AS l ON l.film_id = f.film_id " + "WHERE fd.director_id = " + directorId + " "
+                + "GROUP BY f.film_id");
 
         switch (sortBy.orElse("")) {
             case "like": {
@@ -275,6 +287,7 @@ public class FilmDbStorage implements FilmStorage {
                 "                    ORDER BY COUNT(film_id) DESC " +
                 "                    LIMIT 1) " +
                 "GROUP BY F.film_id;";
+
         return jdbcTemplate.query(RECOMMENDED_FILMS, new Object[]{userId, userId, userId}, (rs, rowNum) -> {
             Film film = new Film();
             film.setId(rs.getLong("film_id"));
@@ -299,5 +312,4 @@ public class FilmDbStorage implements FilmStorage {
             return film;
         });
     }
-
 }
