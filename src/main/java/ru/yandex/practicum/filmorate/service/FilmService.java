@@ -102,6 +102,10 @@ public class FilmService {
         }
     }
 
+    public List<Film> getSearchResults(String query, String by) {
+        return filmStorage.searchBy(query, by);
+    }
+
     public void validateNewFilm(Film film) throws ValidateException {
 
         if (film.getName() == null || film.getName().isEmpty()) {
