@@ -1,15 +1,12 @@
 package ru.yandex.practicum.filmorate.storage.db;
 
-import liquibase.pro.packaged.F;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Feed;
-import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FeedsStorage;
 
 import java.util.ArrayList;
@@ -37,7 +34,7 @@ public class FeedsDbStorage implements FeedsStorage {
         values.put("timestamp", feed.getTimestamp());
 
         SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
-                .withTableName("add_feed")
+                .withTableName("feed")
                 .usingGeneratedKeyColumns("event_id");
 
 
@@ -57,10 +54,12 @@ public class FeedsDbStorage implements FeedsStorage {
             feed.setTimestamp(feedRows.getLong("timestamp"));
 
             feeds.add(feed);
-            log.info("Найдена лента событий пользователя: {}", feed.getUserId());
+            log.info("Найдена лента событий пользователя: {}", userId);
 
 
         }
+
         return feeds;
+
     }
 }

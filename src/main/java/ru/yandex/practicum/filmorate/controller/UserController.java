@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import ru.yandex.practicum.filmorate.exception.ValidateException;
 import lombok.extern.slf4j.Slf4j;
 import ru.yandex.practicum.filmorate.model.Feed;
@@ -83,4 +82,6 @@ public class UserController {
     public @ResponseBody List<Feed> getFeed(@PathVariable Long userId) {
         return feedService.getFeedByUserId(userId);
     }
+
+
 }

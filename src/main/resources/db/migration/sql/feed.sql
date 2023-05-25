@@ -6,4 +6,7 @@ CREATE TABLE IF NOT EXISTS feed
     event_type varchar,
     operation  varchar,
     timestamp bigint
+
 );
+ALTER TABLE feed
+    ADD FOREIGN KEY (user_id) REFERENCES users (user_id);

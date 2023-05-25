@@ -74,4 +74,4 @@ databaseChangeLog:
         - sqlFile:
             encoding: UTF-8
             relativeToChangelogFile: true
-            path: sql/add_feed.sql
+            path: sql/feed.sql

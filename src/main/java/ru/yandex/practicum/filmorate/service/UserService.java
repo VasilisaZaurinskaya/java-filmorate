@@ -5,7 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidateException;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.time.LocalDate;
@@ -19,6 +21,8 @@ public class UserService {
 
     private final UserStorage userStorage;
     private final FeedService feedService;
+
+    private FilmStorage filmStorage;
 
 
     public User getUserById(Long id) {
@@ -65,7 +69,7 @@ public class UserService {
 
         userStorage.createFriend(user, userFriend);
 
-        feedService.addFriend(user, userFriend);
+        feedService.addFriend(id, friendId);
     }
 
     public void deleteFriend(Long id, Long friendId) {
@@ -83,7 +87,7 @@ public class UserService {
         }
 
         userStorage.deleteFriend(id, friendId);
-        feedService.deleteFriend(user, userFriend);
+        feedService.deleteFriend(id, friendId);
     }
 
     public List<User> getFriendList(Long userId) {
@@ -132,5 +136,8 @@ public class UserService {
 
 
     }
+
+
+
 
 }

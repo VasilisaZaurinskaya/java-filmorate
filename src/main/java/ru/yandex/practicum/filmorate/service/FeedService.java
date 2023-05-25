@@ -1,18 +1,13 @@
 package ru.yandex.practicum.filmorate.service;
 
-import liquibase.pro.packaged.F;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Feed;
-import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FeedsStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
-import java.sql.Timestamp;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+
 import java.util.List;
 
 @Service
@@ -37,10 +32,10 @@ public class FeedService {
     }
 
 
-    public void addFriend(User user, User userFriend) {
-        log.info("Пользователь {} добавил друга", user);
+    public void addFriend(Long id, Long friendId) {
+        log.info("Пользователь {} добавил друга", id);
         Feed feed = Feed.builder()
-                .entityId(user.getId())
+                .entityId(id)
                 .eventType(FRIEND)
                 .operation(ADD)
                 .build();
@@ -50,10 +45,10 @@ public class FeedService {
     }
 
 
-    public void deleteFriend(User user, User userFriend) {
-        log.info("Пользователь {} удалил друга", user);
+    public void deleteFriend(Long id, Long friendId) {
+        log.info("Пользователь {} удалил друга", id);
         Feed feed = Feed.builder()
-                .entityId(user.getId())
+                .entityId(id)
                 .eventType(FRIEND)
                 .operation(DELETE)
                 .build();
@@ -61,10 +56,10 @@ public class FeedService {
         feedsStorage.save(feed);
     }
 
-    public void addLike(User user, Film film) {
-        log.info("Пользователь {} поставил лайк фильму {}", user, film);
+    public void addLike(Long filmId, Long userId) {
+        log.info("Пользователь {} поставил лайк фильму {}", userId, filmId);
         Feed feed = Feed.builder()
-                .eventId(user.getId())
+                .eventId(userId)
                 .eventType(LIKE)
                 .operation(ADD)
                 .build();
@@ -72,13 +67,13 @@ public class FeedService {
         feedsStorage.save(feed);
     }
 
-    public void deleteLike(User user, Film film) {
-        log.info("Пользователь {} удалил лайк у фильма {}", user, film);
+    public void removeLike(Long userId, Long filmId) {
+        log.info("Пользователь {} удалил лайк у фильма {}", userId, filmId  );
         Feed feed = Feed.builder()
-                .userId(user.getId())
+                .userId(userId)
                 .eventType(LIKE)
                 .operation(DELETE)
-                .entityId(film.getId())
+                .entityId(filmId)
                 .build();
 
         feedsStorage.save(feed);
@@ -86,4 +81,5 @@ public class FeedService {
     public List<Feed> getFeedByUserId(Long userId){
         return feedsStorage.getFeedByUserId(userId);
     }
+
 }
