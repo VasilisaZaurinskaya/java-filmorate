@@ -42,4 +42,6 @@ public interface FilmStorage {
     List<Film> findFilmsByDirector(Long id, Optional<String> sortBy);
 
     List<Film> getRecommendations(Integer userId);
+
+    List<Film> searchBy(String query, String by);
 }
