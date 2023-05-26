@@ -344,7 +344,7 @@ public class FilmDbStorage implements FilmStorage {
             return film;
         });
     }
-    
+
     public List<Film> searchBy(String query, String by) {
         List<Film> searchResults = new ArrayList<>();
 
