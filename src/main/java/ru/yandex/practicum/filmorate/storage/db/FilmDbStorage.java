@@ -9,6 +9,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
@@ -16,6 +17,8 @@ import ru.yandex.practicum.filmorate.service.FeedService;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.sql.Date;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -208,8 +211,6 @@ public class FilmDbStorage implements FilmStorage {
         SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("likes");
         simpleJdbcInsert.execute(values);
-
-
     }
 
     @Override
@@ -237,8 +238,6 @@ public class FilmDbStorage implements FilmStorage {
     public void removeLike(Long filmId, Long userId) {
         String sql = "delete from likes where film_id = ? and user_id = ? ";
         jdbcTemplate.update(sql, filmId, userId);
-
-
     }
 
     @Override
@@ -302,5 +301,73 @@ public class FilmDbStorage implements FilmStorage {
         return films;
     }
 
+    @Override
+    public List<Film> searchBy(String query, String by) {
+        List<Film> searchResults = new ArrayList<>();
 
+        switch (by) {
+            case "title": {
+                String sql = "SELECT films.*, G.genre_id, GT.name AS genre_name, COUNT(l.film_id) as count " +
+                        "FROM films " +
+                        "LEFT JOIN genre_film g ON films.film_id = g.film_id " +
+                        "LEFT JOIN genres gt on g.genre_id = gt.genre_id " +
+                        "LEFT JOIN likes l ON films.film_id=l.film_id " +
+                        "WHERE LOWER(films.name) LIKE LOWER(CONCAT('%',?,'%')) " +
+                        "GROUP BY films.film_id " +
+                        "ORDER BY count DESC";
+                searchResults = jdbcTemplate.query(sql, this::mapToFilm, query);
+                break;
+            }
+            case "director": {
+                String sql = "SELECT films.*, COUNT(l.film_id) as count " +
+                        "FROM films " +
+                        "JOIN films_director  df ON films.film_id=df.film_id " +
+                        "JOIN directors  d ON df.director_id=d.director_id " +
+                        "LEFT JOIN likes l ON films.film_id=l.film_id " +
+                        "WHERE LOWER(d.name) LIKE LOWER(CONCAT('%',?,'%')) " +
+                        "GROUP BY films.film_id " +
+                        "ORDER BY count DESC";
+                searchResults = jdbcTemplate.query(sql, this::mapToFilm, query);
+                break;
+            }
+            case "title,director": {
+                String sql = "SELECT films.*, COUNT(l.film_id) as count " +
+                        "FROM films " +
+                        "LEFT JOIN films_director  df ON films.film_id=df.film_id " +
+                        "LEFT JOIN directors  d ON df.director_id=d.director_id " +
+                        "LEFT JOIN likes l ON films.film_id=l.film_id " +
+                        "WHERE LOWER(films.name) LIKE LOWER(CONCAT('%',?,'%')) " +
+                        "OR LOWER(d.name) LIKE LOWER(CONCAT('%',?,'%')) " +
+                        "GROUP BY films.film_id " +
+                        "ORDER BY count DESC";
+                searchResults = jdbcTemplate.query(sql, this::mapToFilm, query, query);
+                break;
+            }
+        }
+        return searchResults;
+    }
+
+    private Film mapToFilm(ResultSet rs, int rowNum) throws SQLException {
+        Long id = rs.getLong("film_id");
+        String name = rs.getString("name");
+        String description = rs.getString("description");
+        Integer duration = rs.getInt("duration");
+        LocalDate releaseDate = rs.getDate("release_date").toLocalDate();
+        Mpa mpa = mpaDbStorage.getMpaById(rs.getInt("mpa_rating_id"));
+        List<Genre> genres = getGenresForFilm(id);
+        LinkedHashSet<Director> directors = directorDbStorage.getDirectorsByFilm(id);
+
+        log.info("Создание объекта фильма из базы с id {}", id);
+
+        return Film.builder()
+                .id(id)
+                .name(name)
+                .description(description)
+                .duration(duration)
+                .releaseDate(releaseDate)
+                .mpa(mpa)
+                .genres(genres)
+                .directors(directors)
+                .build();
+    }
 }

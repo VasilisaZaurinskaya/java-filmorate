@@ -23,5 +23,5 @@ public interface FilmStorage {
 
     List<Film> findFilmsByDirector(Long id, Optional<String> sortBy);
 
-
+    List<Film> searchBy(String query, String by);
 }

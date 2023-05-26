@@ -82,4 +82,10 @@ public class FilmController {
     public @ResponseBody List<Film> getFilmsByDirector(@PathVariable Long id, @RequestParam Optional<String> sortBy) {
         return filmService.findFilmsByDirector(id, sortBy);
     }
+
+    @GetMapping("/search")
+    public List<Film> getSearchResults(@RequestParam String query, @RequestParam String by) {
+        log.info("Поступил запрос на получение результатов поиска по фильмам.");
+        return filmService.getSearchResults(query, by);
+    }
 }
