@@ -343,7 +343,7 @@ public class FilmDbStorage implements FilmStorage {
             film.setGenres(genres);
             return film;
         });
-
+    }
     public List<Film> searchBy(String query, String by) {
         List<Film> searchResults = new ArrayList<>();
 
