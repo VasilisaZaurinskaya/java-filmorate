@@ -87,6 +87,10 @@ public class FilmService {
         return filmStorage.getMostPopularFilms(count);
     }
 
+    public List<Film> getCommonFilms(Integer userId, Integer friendId) {
+        return filmStorage.getCommonFilms(userId, friendId);
+    }
+
     public List<Film> findFilmsByDirector(Long id, Optional<String> sortBy) {
         if (id < 0) {
             throw new NotFoundException("id не может быть отрицательным");

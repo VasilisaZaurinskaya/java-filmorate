@@ -37,6 +37,8 @@ public interface FilmStorage {
 
     List<Film> getMostPopularFilms(Integer count);
 
+    List<Film> getCommonFilms(Integer userId, Integer friendId);
+
     void removeLike(Long filmId, Long userId);
 
     List<Film> findFilmsByDirector(Long id, Optional<String> sortBy);

@@ -78,6 +78,14 @@ public class FilmController {
         return filmService.getMostPopularFilms(count);
     }
 
+    @GetMapping("/common")
+    public List<Film> getCommonFilms(
+            @RequestParam(required = false) Integer userId,
+            @RequestParam(required = false) Integer friendId
+    ) {
+        return filmService.getCommonFilms(userId, friendId);
+    }
+
     @GetMapping("/director/{id}")
     public @ResponseBody List<Film> getFilmsByDirector(@PathVariable Long id, @RequestParam Optional<String> sortBy) {
         return filmService.findFilmsByDirector(id, sortBy);

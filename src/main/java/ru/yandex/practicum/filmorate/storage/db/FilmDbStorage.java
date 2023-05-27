@@ -251,6 +251,32 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
+    public List<Film> getCommonFilms(Integer userId, Integer friendId) {
+        SqlRowSet likesRows;
+        ArrayList<Film> commonFilms = new ArrayList<>();
+
+        String sql = "SELECT f.film_id " +
+                "FROM films AS f " +
+                "LEFT OUTER JOIN likes AS l ON f.film_id = l.film_id " +
+                "WHERE f.film_id IN ( " +
+                "   SELECT f.film_id " +
+                "   FROM films AS f " +
+                "   LEFT JOIN likes AS l ON f.film_id = l.film_id " +
+                "   WHERE user_id = ? " +
+                ") " +
+                "AND user_id = ? " +
+                "GROUP BY f.film_id " +
+                "ORDER BY count(DISTINCT user_id) DESC ";
+        likesRows = jdbcTemplate.queryForRowSet(sql, userId, friendId);
+
+        while (likesRows.next()) {
+            Long filmId = likesRows.getLong("film_id");
+            commonFilms.add(getFilmById(filmId));
+        }
+        return commonFilms;
+    }
+
+    @Override
     public void removeLike(Long filmId, Long userId) {
         String sql = "DELETE FROM likes WHERE film_id = ? AND user_id = ? ";
         jdbcTemplate.update(sql, filmId, userId);
