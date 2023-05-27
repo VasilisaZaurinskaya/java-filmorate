@@ -16,6 +16,7 @@ import java.util.List;
 @Component
 @Primary
 public class GenreDbStorage implements GenreStorage {
+
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired
@@ -23,10 +24,9 @@ public class GenreDbStorage implements GenreStorage {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-
     @Override
     public List<Genre> getAllGenres() {
-        String sql = "select * from genres order by genre_id";
+        String sql = "SELECT * FROM genres ORDER BY genre_id";
         SqlRowSet genreRows = jdbcTemplate.queryForRowSet(sql);
         ArrayList<Genre> genres = new ArrayList<Genre>();
         while (genreRows.next()) {
@@ -40,7 +40,7 @@ public class GenreDbStorage implements GenreStorage {
 
     @Override
     public Genre getGenreById(Long id) {
-        String sql = "select * from genres where genre_id = ?";
+        String sql = "SELECT * FROM genres WHERE genre_id = ?";
         SqlRowSet genreRows = jdbcTemplate.queryForRowSet(sql, id);
 
         if (genreRows.next()) {
@@ -57,5 +57,25 @@ public class GenreDbStorage implements GenreStorage {
             return null;
         }
 
+    }
+
+    @Override
+    public Long getGenreIdByName(String genreName) {
+        String sql = "SELECT genre_id FROM genres WHERE name = ?";
+        SqlRowSet genreRows = jdbcTemplate.queryForRowSet(sql, genreName);
+
+        if (genreRows.next()) {
+            return genreRows.getLong("genre_id");
+        } else {
+            log.info("Жанр с именем {} не найден.", genreName);
+            return null;
+        }
+    }
+
+    @Override
+    public Long addGenre(Genre genre) {
+        String sql = "INSERT INTO genres (genre_id) " + "SELECT ? "
+                + "WHERE NOT exists (SELECT * FROM genres WHERE name = ?)";
+        return jdbcTemplate.queryForObject(sql, Long.class, genre.getName());
     }
 }

@@ -13,13 +13,13 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.GenreStorage;
 
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.*;
-
 
 @Component
 @Slf4j
@@ -29,18 +29,18 @@ public class FilmDbStorage implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;
     private final DirectorDbStorage directorDbStorage;
     private final MpaDbStorage mpaDbStorage;
+    private final GenreStorage genreStorage;
 
     @Autowired
     public FilmDbStorage(
-            JdbcTemplate jdbcTemplate,
-            MpaDbStorage mpaDbStorage,
-            DirectorDbStorage directorDbStorage
+            JdbcTemplate jdbcTemplate, MpaDbStorage mpaDbStorage, DirectorDbStorage directorDbStorage,
+            GenreStorage genreStorage
     ) {
         this.jdbcTemplate = jdbcTemplate;
         this.mpaDbStorage = mpaDbStorage;
         this.directorDbStorage = directorDbStorage;
+        this.genreStorage = genreStorage;
     }
-
 
     @Override
     public Film createFilm(Film film) {
@@ -50,7 +50,6 @@ public class FilmDbStorage implements FilmStorage {
         values.put("release_date", film.getReleaseDate());
         values.put("duration", film.getDuration());
         values.put("mpa_rating_id", film.getMpa().getId());
-
 
         SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("films")
@@ -77,7 +76,9 @@ public class FilmDbStorage implements FilmStorage {
         }
 
         for (Genre genre : genres) {
-            if (addedGenreIds.contains(genre.getId())) continue;
+            if (addedGenreIds.contains(genre.getId())) {
+                continue;
+            }
 
             Map<String, Object> values = new HashMap<>();
             values.put("film_id", filmId);
@@ -85,6 +86,7 @@ public class FilmDbStorage implements FilmStorage {
 
             SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                     .withTableName("genre_film");
+
             simpleJdbcInsert.execute(values);
 
             addedGenreIds.add(genre.getId());
@@ -96,6 +98,7 @@ public class FilmDbStorage implements FilmStorage {
         if (getFilmById(film.getId()) == null) {
             throw new NotFoundException("Фильм с идентификатором " + film.getId() + " не найден.");
         }
+
 
         jdbcTemplate.update(
                 "update films set " +
@@ -126,15 +129,17 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     private void deleteGenres(Long filmId) {
-        String sql = "delete from genre_film where film_id = ?";
+        String sql = "DELETE FROM genre_film WHERE film_id = ?";
         jdbcTemplate.update(sql, filmId);
     }
 
     @Override
     public List<Film> getAllFilms() {
+
         SqlRowSet filmRows = jdbcTemplate.queryForRowSet("select f.*, mr.name mpa_name, mr.description mpa_description" +
                 " from films as f " +
                 "join mpa_rating as mr  on mr.mpa_rating_id  = f.mpa_rating_id ");
+
         ArrayList<Film> films = new ArrayList<>();
         while (filmRows.next()) {
             Mpa mpa = new Mpa();
@@ -191,6 +196,7 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     public List<Genre> getGenresForFilm(Long filmId) {
+
         String sql = "select * " +
                 "from genres as g " +
                 "join genre_film as gf on gf.genre_id = g.genre_id " +
@@ -206,7 +212,6 @@ public class FilmDbStorage implements FilmStorage {
         }
         return genres;
 
-
     }
 
     @Override
@@ -216,6 +221,7 @@ public class FilmDbStorage implements FilmStorage {
         values.put("film_id", filmId);
         values.put("user_id", userId);
 
+
         SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("likes");
         simpleJdbcInsert.execute(values);
@@ -224,7 +230,9 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public List<Film> getMostPopularFilms(Integer limit) {
 
-        if (limit == null) limit = 10;
+        if (limit == null) {
+            limit = 10;
+        }
 
         String sql = "select f.film_id " +
                 "from films as f " +
@@ -244,7 +252,7 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public void removeLike(Long filmId, Long userId) {
-        String sql = "delete from likes where film_id = ? and user_id = ? ";
+        String sql = "DELETE FROM likes WHERE film_id = ? AND user_id = ? ";
         jdbcTemplate.update(sql, filmId, userId);
     }
 
@@ -273,6 +281,7 @@ public class FilmDbStorage implements FilmStorage {
                 break;
             }
         }
+
 
         List<Film> films = mapToFilms(
                 jdbcTemplate.queryForList(sqlQuery.toString())
@@ -310,6 +319,32 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
+    public List<Film> getRecommendations(Integer userId) {
+        return jdbcTemplate.query(RECOMMENDED_FILMS, new Object[]{userId, userId, userId}, (rs, rowNum) -> {
+            Film film = new Film();
+            film.setId(rs.getLong("film_id"));
+            film.setName(rs.getString("film_name"));
+            film.setDescription(rs.getString("film_description"));
+            film.setReleaseDate(rs.getDate("release_date").toLocalDate());
+            film.setDuration(rs.getInt("duration"));
+            film.setMpa(mpaDbStorage.getMpaById(rs.getInt("mpa_rating_id")));
+            String genresStr = rs.getString("genres");
+            List<Genre> genres = new ArrayList<>();
+            if (genresStr != null) {
+                String[] genreNames = genresStr.split(", ");
+                for (String genreName : genreNames) {
+                    Long genreId = genreStorage.getGenreIdByName(genreName);
+                    if (genreId == null) {
+                        genreId = genreStorage.addGenre(new Genre(null, genreName));
+                    }
+                    genres.add(new Genre(genreId, genreName));
+                }
+            }
+            film.setGenres(genres);
+            return film;
+        });
+    }
+
     public List<Film> searchBy(String query, String by) {
         List<Film> searchResults = new ArrayList<>();
 
