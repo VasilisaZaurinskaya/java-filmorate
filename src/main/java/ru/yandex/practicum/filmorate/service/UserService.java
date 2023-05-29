@@ -5,28 +5,31 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidateException;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.time.LocalDate;
 import java.util.List;
-
 
 @Service
 @Slf4j
 public class UserService {
 
     private final UserStorage userStorage;
+    private final FilmStorage filmStorage;
 
     @Autowired
-    public UserService(UserStorage userStorage) {
+    public UserService(UserStorage userStorage, FilmStorage filmStorage) {
         this.userStorage = userStorage;
+        this.filmStorage = filmStorage;
     }
 
     public User getUserById(Long id) {
         if (userStorage.getUserbyId(id) == null) {
-            log.error("Пользватель не может быть равен null");
-            throw new NotFoundException("Пользватель не может быть равен null");
+            log.error("Пользователь не может быть равен null");
+            throw new NotFoundException("Пользователь не может быть равен null");
         } else {
             return userStorage.getUserbyId(id);
         }
@@ -77,8 +80,8 @@ public class UserService {
         return userStorage.getFriendList(userId);
     }
 
-    public List<User> getMitualFriends(Long id, Long otherId) {
-        return userStorage.getMitualFriends(id, otherId);
+    public List<User> getMutualFriends(Long id, Long otherId) {
+        return userStorage.getMutualFriends(id, otherId);
     }
 
     public void validateAddFriend(Long id, Long friendId) throws ValidateException {
@@ -107,8 +110,6 @@ public class UserService {
             log.error("Неправильная дата рождения пользователя");
             throw new ValidateException("Неправильная дата рождения пользователя");
         }
-
-
     }
 
     public void validateUserFriend(Long id) {
@@ -116,7 +117,11 @@ public class UserService {
             log.error("Не указаны параметры для удаления из друзей");
             throw new ValidateException("id не может быть равен null");
         }
+    }
 
+    public List<Film> getRecommendations(Integer userId) {
+        log.debug("Recommendations for films to watch from user with ID {}", userId);
+        return filmStorage.getRecommendations(userId);
     }
 
 }
