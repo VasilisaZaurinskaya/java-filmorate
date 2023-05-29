@@ -10,4 +10,6 @@ public interface FeedsStorage {
     void save(Feed feed);
 
     List<Feed> getFeedByUserId(Long userId);
+
+
 }

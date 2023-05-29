@@ -10,10 +10,22 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Feed {
+    /**
+     * primary key
+     */
     private Long eventId;
     private Long userId;
+    /**
+     * одно из значениий LIKE, REVIEW или FRIEND
+     */
     private String eventType;
+    /**
+     * одно из значениий REMOVE, ADD, UPDATE
+     */
     private String operation;
+    /**
+     * идентификатор сущности, с которой произошло событие
+     */
     private Long entityId;
     private Long timestamp;
 

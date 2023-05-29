@@ -37,6 +37,7 @@ public class FeedsDbStorage implements FeedsStorage {
                 .withTableName("feed")
                 .usingGeneratedKeyColumns("event_id");
 
+        simpleJdbcInsert.executeAndReturnKey(values).longValue();
 
     }
 
@@ -47,6 +48,7 @@ public class FeedsDbStorage implements FeedsStorage {
         while (feedRows.next()) {
 
             Feed feed = new Feed();
+            feed.setEventId(feedRows.getLong("event_id"));
             feed.setUserId(feedRows.getLong("user_id"));
             feed.setEntityId(feedRows.getLong("entity_id"));
             feed.setOperation(feedRows.getString("operation"));
@@ -62,4 +64,6 @@ public class FeedsDbStorage implements FeedsStorage {
         return feeds;
 
     }
+
+
 }
