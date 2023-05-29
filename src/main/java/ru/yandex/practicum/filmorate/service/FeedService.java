@@ -28,10 +28,10 @@ public class FeedService {
     private final UserStorage userStorage;
 
 
-    public void addFriend(Long id, Long friendId) {
-        log.info("Пользователь {} добавил друга {}", id, friendId);
+    public void addFriend(Long userId, Long friendId) {
+        log.info("Пользователь {} добавил друга {}", userId, friendId);
         Feed feed = Feed.builder()
-                .userId(id)
+                .userId(userId)
                 .entityId(friendId)
                 .eventType(FRIEND)
                 .operation(ADD)
@@ -43,10 +43,10 @@ public class FeedService {
     }
 
 
-    public void deleteFriend(Long id, Long friendId) {
-        log.info("Пользователь {} удалил друга", id);
+    public void deleteFriend(Long userId, Long friendId) {
+        log.info("Пользователь {} удалил друга", userId);
         Feed feed = Feed.builder()
-                .userId(id)
+                .userId(userId)
                 .entityId(friendId)
                 .eventType(FRIEND)
                 .operation(REMOVE)
@@ -56,7 +56,7 @@ public class FeedService {
         feedsStorage.save(feed);
     }
 
-    public void addLike(Long filmId, Long userId) {
+    public void addLike(Long userId, Long filmId) {
         log.info("Пользователь {} поставил лайк фильму {}", userId, filmId);
         Feed feed = Feed.builder()
                 .userId(userId)
@@ -82,39 +82,39 @@ public class FeedService {
         feedsStorage.save(feed);
     }
 
-    public void addReview(Long id, Long userId) {
-        log.info("Пользователь {} добавил отзыв {}", userId, id);
+    public void addReview(Long userId, Long reviewId) {
+        log.info("Пользователь {} добавил отзыв {}", userId, reviewId);
         Feed feed = Feed.builder()
                 .userId(userId)
                 .eventType(REVIEW)
                 .operation(ADD)
-                .eventId(id)
+                .eventId(reviewId)
                 .timestamp(new Date().getTime())
                 .build();
 
         feedsStorage.save(feed);
     }
 
-    public void removeReview(Long id, Long userId) {
-        log.info("Пользователь {} удалил отзыв {}", userId, id);
+    public void removeReview(Long reviewId, Long userId) {
+        log.info("Пользователь {} удалил отзыв {}", userId, reviewId);
         Feed feed = Feed.builder()
                 .userId(userId)
                 .eventType(REVIEW)
                 .operation(REMOVE)
-                .eventId(id)
+                .eventId(reviewId)
                 .timestamp(new Date().getTime())
                 .build();
 
         feedsStorage.save(feed);
     }
 
-    public void updateReview(Long id, Long userId) {
-        log.info("Пользователь {} обновил отзыв {}", userId, id);
+    public void updateReview(Long userId, Long reviewId) {
+        log.info("Пользователь {} обновил отзыв {}", userId, reviewId);
         Feed feed = Feed.builder()
                 .userId(userId)
                 .eventType(REVIEW)
                 .operation(UPDATE)
-                .eventId(id)
+                .eventId(reviewId)
                 .timestamp(new Date().getTime())
                 .build();
 

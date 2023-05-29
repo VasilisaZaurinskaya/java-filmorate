@@ -53,13 +53,13 @@ public class UserService {
         return userStorage.getAllUsers();
     }
 
-    public void addFriend(Long id, Long friendId) {
+    public void addFriend(Long userId, Long friendId) {
 
-        User user = userStorage.getUserbyId(id);
+        User user = userStorage.getUserbyId(userId);
         User userFriend = userStorage.getUserbyId(friendId);
 
         if (user == null) {
-            log.error("Не найден пользователь с id = {}", id);
+            log.error("Не найден пользователь с id = {}", userId);
             throw new NotFoundException("Не найден пользователь с указанным id");
         }
         if (userFriend == null) {
@@ -69,16 +69,16 @@ public class UserService {
 
         userStorage.createFriend(user, userFriend);
 
-        feedService.addFriend(id, friendId);
+        feedService.addFriend(userId, friendId);
     }
 
-    public void deleteFriend(Long id, Long friendId) {
+    public void deleteFriend(Long userId, Long friendId) {
 
-        User user = userStorage.getUserbyId(id);
+        User user = userStorage.getUserbyId(userId);
         User userFriend = userStorage.getUserbyId(friendId);
 
         if (user == null) {
-            log.error("Не найден пользователь с id = {}", id);
+            log.error("Не найден пользователь с id = {}", userId);
             throw new NotFoundException("Не найден пользователь с указанным id");
         }
         if (userFriend == null) {
@@ -86,20 +86,20 @@ public class UserService {
             throw new NotFoundException("Не найден пользователь с указанным id");
         }
 
-        userStorage.deleteFriend(id, friendId);
-        feedService.deleteFriend(id, friendId);
+        userStorage.deleteFriend(userId, friendId);
+        feedService.deleteFriend(userId, friendId);
     }
 
     public List<User> getFriendList(Long userId) {
         return userStorage.getFriendList(userId);
     }
 
-    public List<User> getMitualFriends(Long id, Long otherId) {
-        return userStorage.getMitualFriends(id, otherId);
+    public List<User> getMitualFriends(Long userId, Long otherId) {
+        return userStorage.getMitualFriends(userId, otherId);
     }
 
-    public void validateAddFriend(Long id, Long friendId) throws ValidateException {
-        if (id == null || friendId == null) {
+    public void validateAddFriend(Long userId, Long friendId) throws ValidateException {
+        if (userId == null || friendId == null) {
             log.error("Не указаны параметры для добавления в друзья");
             throw new ValidateException("id не может быть равен null");
         }

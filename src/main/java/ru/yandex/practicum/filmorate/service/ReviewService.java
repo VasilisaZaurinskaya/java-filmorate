@@ -2,11 +2,9 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Review;
-import ru.yandex.practicum.filmorate.storage.FeedsStorage;
 import ru.yandex.practicum.filmorate.storage.ReviewStorage;
 
 import java.util.List;
@@ -18,7 +16,6 @@ import java.util.Optional;
 public class ReviewService {
     private final ReviewStorage reviewStorage;
     private final FeedService feedService;
-
 
 
     public List<Review> findAll(Optional<Long> filmId, Optional<Integer> count) {
@@ -41,18 +38,19 @@ public class ReviewService {
         if (review.getFilmId() < 0) {
             throw new NotFoundException("Нет такого фильма");
         }
-        feedService.addReview(review.getReviewId(),review.getUserId());
+        feedService.addReview(review.getUserId(), review.getReviewId());
         return reviewStorage.create(review);
     }
 
     public Review update(Review review) {
-        feedService.updateReview(review.getReviewId(),review.getUserId());
+        feedService.updateReview(review.getUserId(), review.getReviewId());
         return reviewStorage.update(review);
 
     }
 
     public String delete(Long id) {
-
+        Review reviewToDelete = findById(id);
+        feedService.removeReview(id, reviewToDelete.getUserId());
         return reviewStorage.delete(id);
     }
 
