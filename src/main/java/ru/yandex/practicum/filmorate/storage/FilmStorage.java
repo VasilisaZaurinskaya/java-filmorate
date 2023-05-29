@@ -35,7 +35,7 @@ public interface FilmStorage {
 
     void addLike(Long filmId, Long userId);
 
-    List<Film> getMostPopularFilms(Integer count);
+    List<Film> getMostPopularFilms(Integer count, Integer genreId, Integer year);
 
     List<Film> getCommonFilms(Integer userId, Integer friendId);
 

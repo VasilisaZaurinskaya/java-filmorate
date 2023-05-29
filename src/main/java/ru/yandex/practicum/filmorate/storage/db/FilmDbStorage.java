@@ -228,21 +228,52 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public List<Film> getMostPopularFilms(Integer limit) {
-
-        if (limit == null) {
-            limit = 10;
-        }
-
-        String sql = "select f.film_id " +
-                "from films as f " +
-                "left outer join likes as l on l.film_id = f.film_id " +
-                "group by f.film_id " +
-                "order by count(l.user_id) desc, f.film_id desc " +
-                "limit ?";
-
-        SqlRowSet likesRows = jdbcTemplate.queryForRowSet(sql, limit);
+    public List<Film> getMostPopularFilms(Integer limit, Integer genreId, Integer year) {
+        SqlRowSet likesRows;
         ArrayList<Film> mostPopularFilms = new ArrayList<>();
+
+        if (genreId == null && year == null) {
+            String sql = "SELECT f.film_id " +
+                    "FROM films AS f " +
+                    "LEFT OUTER JOIN likes AS l ON l.film_id = f.film_id " +
+                    "GROUP BY f.film_id " +
+                    "ORDER BY count(l.user_id) DESC , f.film_id DESC " +
+                    "limit ?";
+            likesRows = jdbcTemplate.queryForRowSet(sql, limit);
+
+        } else if (genreId != null && year != null) {
+            String sql = "SELECT f.film_id " +
+                    "FROM films AS f " +
+                    "LEFT OUTER JOIN likes AS l ON l.film_id = f.film_id " +
+                    "LEFT JOIN  genre_film AS gf ON f.film_id = gf.film_id " +
+                    "WHERE  gf.genre_id = ? AND year(f.release_date) = ? " +
+                    "GROUP BY f.film_id " +
+                    "ORDER BY count(l.user_id) DESC , f.film_id DESC " +
+                    "limit ?";
+            likesRows = jdbcTemplate.queryForRowSet(sql, genreId, year, limit);
+
+        } else if (year == null) {
+            String sql = "SELECT f.film_id " +
+                    "FROM films AS f " +
+                    "LEFT OUTER JOIN likes AS l ON l.film_id = f.film_id " +
+                    "LEFT JOIN genre_film AS gf ON f.film_id = gf.film_id " +
+                    "WHERE gf.genre_id = ? " +
+                    "GROUP BY f.film_id " +
+                    "ORDER BY count(l.user_id) DESC , f.film_id DESC " +
+                    "limit ?";
+            likesRows = jdbcTemplate.queryForRowSet(sql, genreId, limit);
+
+        } else {
+            String sql = "SELECT f.film_id " +
+                    "FROM films AS f " +
+                    "LEFT OUTER JOIN likes AS l ON l.film_id = f.film_id " +
+                    "LEFT JOIN genre_film AS gf ON f.film_id = gf.film_id " +
+                    "WHERE year(f.release_date) = ? " +
+                    "GROUP BY f.film_id " +
+                    "ORDER BY count(l.user_id) DESC , f.film_id DESC " +
+                    "limit ?";
+            likesRows = jdbcTemplate.queryForRowSet(sql, year, limit);
+        }
         while (likesRows.next()) {
             Long filmId = likesRows.getLong("film_id");
             mostPopularFilms.add(getFilmById(filmId));
