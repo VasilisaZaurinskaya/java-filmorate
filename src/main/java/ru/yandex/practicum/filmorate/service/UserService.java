@@ -13,7 +13,6 @@ import ru.yandex.practicum.filmorate.storage.UserStorage;
 import java.time.LocalDate;
 import java.util.List;
 
-
 @Service
 @Slf4j
 @AllArgsConstructor
@@ -27,8 +26,8 @@ public class UserService {
 
     public User getUserById(Long id) {
         if (userStorage.getUserbyId(id) == null) {
-            log.error("Пользватель не может быть равен null");
-            throw new NotFoundException("Пользватель не может быть равен null");
+            log.error("Пользователь не может быть равен null");
+            throw new NotFoundException("Пользователь не может быть равен null");
         } else {
             return userStorage.getUserbyId(id);
         }
@@ -93,8 +92,8 @@ public class UserService {
         return userStorage.getFriendList(userId);
     }
 
-    public List<User> getMitualFriends(Long userId, Long otherId) {
-        return userStorage.getMitualFriends(userId, otherId);
+    public List<User> getMutualFriends(Long id, Long otherId) {
+        return userStorage.getMutualFriends(id, otherId);
     }
 
     public void validateAddFriend(Long userId, Long friendId) throws ValidateException {
@@ -123,8 +122,6 @@ public class UserService {
             log.error("Неправильная дата рождения пользователя");
             throw new ValidateException("Неправильная дата рождения пользователя");
         }
-
-
     }
 
     public void validateUserFriend(Long id) {
@@ -132,8 +129,11 @@ public class UserService {
             log.error("Не указаны параметры для удаления из друзей");
             throw new ValidateException("id не может быть равен null");
         }
+    }
 
-
+    public List<Film> getRecommendations(Integer userId) {
+        log.debug("Recommendations for films to watch from user with ID {}", userId);
+        return filmStorage.getRecommendations(userId);
     }
 
 

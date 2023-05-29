@@ -11,4 +11,7 @@ public interface GenreStorage {
 
     Genre getGenreById(Long id);
 
+    Long getGenreIdByName(String genreName);
+
+    Long addGenre(Genre genre);
 }

@@ -26,7 +26,7 @@ public class MpaDbStorage implements MpaStorage {
 
     @Override
     public List<Mpa> getAllMpa() {
-        SqlRowSet mpaRows = jdbcTemplate.queryForRowSet("select * from mpa_rating");
+        SqlRowSet mpaRows = jdbcTemplate.queryForRowSet("SELECT * FROM mpa_rating");
         ArrayList<Mpa> mpa = new ArrayList<Mpa>();
         while (mpaRows.next()) {
             Mpa mpa1 = new Mpa();
@@ -41,7 +41,7 @@ public class MpaDbStorage implements MpaStorage {
 
     @Override
     public Mpa getMpaById(Integer id) {
-        SqlRowSet mpaRows = jdbcTemplate.queryForRowSet("select * from mpa_rating where mpa_rating_id = ?", id);
+        SqlRowSet mpaRows = jdbcTemplate.queryForRowSet("SELECT * FROM mpa_rating WHERE mpa_rating_id = ?", id);
 
         if (mpaRows.next()) {
 

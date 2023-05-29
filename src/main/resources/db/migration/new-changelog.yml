@@ -1,0 +1,24 @@
+  <changeSet id="xxx" author="yyy">
+    <dropTable tableName="table_name" />
+    </changeSet>
+databaseChangeLog:
+  - changeSet:
+      id: drop-tables
+      author: your name
+      changes:
+        - dropTable:
+            tableName: users
+        - dropTable:
+            tableName: films
+        - dropTable:
+            tableName: friends
+        - dropTable:
+            tableName: likes
+        - dropTable:
+            tableName: genres
+        - dropTable:
+            tableName: status_friendship
+        - dropTable:
+            tableName: mpa_rating
+        - dropTable:
+            tableName: genre_film

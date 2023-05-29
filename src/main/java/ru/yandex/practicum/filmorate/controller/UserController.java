@@ -13,7 +13,6 @@ import ru.yandex.practicum.filmorate.service.UserService;
 
 import java.util.List;
 
-
 @RestController
 @RequestMapping("/users")
 @Slf4j
@@ -73,11 +72,16 @@ public class UserController {
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")
-    public @ResponseBody List<User> getMitualFriends(
+    public @ResponseBody List<User> getMutualFriends(
             @PathVariable Long id,
             @PathVariable Long otherId
     ) {
-        return userService.getMitualFriends(id, otherId);
+        return userService.getMutualFriends(id, otherId);
+    }
+
+    @GetMapping("/{id}/recommendations")
+    public List<Film> getRecommendations(@PathVariable Integer id) {
+        return userService.getRecommendations(id);
     }
 
     @GetMapping("/{userId}/feed")
