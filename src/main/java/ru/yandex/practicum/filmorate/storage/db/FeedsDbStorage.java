@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.db;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -17,12 +18,10 @@ import java.util.Map;
 @Component
 @Slf4j
 @Primary
+@AllArgsConstructor
 public class FeedsDbStorage implements FeedsStorage {
     private final JdbcTemplate jdbcTemplate;
 
-    public FeedsDbStorage(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
 
     @Override
     public void save(Feed feed) {
