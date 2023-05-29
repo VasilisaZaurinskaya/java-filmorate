@@ -1,9 +1,11 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.AllArgsConstructor;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidateException;
 import lombok.extern.slf4j.Slf4j;
 import ru.yandex.practicum.filmorate.model.Feed;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.service.FeedService;
@@ -80,6 +82,13 @@ public class UserController {
 
     @GetMapping("/{userId}/feed")
     public @ResponseBody List<Feed> getFeed(@PathVariable Long userId) {
+        User user = userService.getUserById(userId);
+
+        if (user == null) {
+            log.error("Не найден пользователь с id = {}", userId);
+            throw new NotFoundException("Не найден пользователь с указанным id");
+        }
+
         return feedService.getFeedByUserId(userId);
     }
 

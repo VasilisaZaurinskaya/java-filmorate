@@ -79,7 +79,7 @@ public class FilmService {
         }
 
         filmStorage.removeLike(filmId, userId);
-        feedService.removeLike(filmId, userId);
+        feedService.removeLike(userId, filmId);
     }
 
     public List<Film> getMostPopularFilms(Integer count) {

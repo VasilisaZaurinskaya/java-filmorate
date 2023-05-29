@@ -60,7 +60,7 @@ public class FeedService {
         log.info("Пользователь {} поставил лайк фильму {}", userId, filmId);
         Feed feed = Feed.builder()
                 .userId(userId)
-                .eventId(filmId)
+                .entityId(filmId)
                 .eventType(LIKE)
                 .operation(ADD)
                 .timestamp(new Date().getTime())
@@ -86,9 +86,23 @@ public class FeedService {
         log.info("Пользователь {} добавил отзыв {}", userId, reviewId);
         Feed feed = Feed.builder()
                 .userId(userId)
+                .entityId(reviewId)
                 .eventType(REVIEW)
                 .operation(ADD)
-                .eventId(reviewId)
+                .timestamp(new Date().getTime())
+                .build();
+
+        feedsStorage.save(feed);
+    }
+
+
+    public void updateReview(Long userId, Long reviewId) {
+        log.info("Пользователь {} обновил отзыв {}", userId, reviewId);
+        Feed feed = Feed.builder()
+                .userId(userId)
+                .entityId(reviewId)
+                .eventType(REVIEW)
+                .operation(UPDATE)
                 .timestamp(new Date().getTime())
                 .build();
 
@@ -99,22 +113,9 @@ public class FeedService {
         log.info("Пользователь {} удалил отзыв {}", userId, reviewId);
         Feed feed = Feed.builder()
                 .userId(userId)
+                .entityId(reviewId)
                 .eventType(REVIEW)
                 .operation(REMOVE)
-                .eventId(reviewId)
-                .timestamp(new Date().getTime())
-                .build();
-
-        feedsStorage.save(feed);
-    }
-
-    public void updateReview(Long userId, Long reviewId) {
-        log.info("Пользователь {} обновил отзыв {}", userId, reviewId);
-        Feed feed = Feed.builder()
-                .userId(userId)
-                .eventType(REVIEW)
-                .operation(UPDATE)
-                .eventId(reviewId)
                 .timestamp(new Date().getTime())
                 .build();
 

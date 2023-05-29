@@ -38,13 +38,16 @@ public class ReviewService {
         if (review.getFilmId() < 0) {
             throw new NotFoundException("Нет такого фильма");
         }
+
+        review = reviewStorage.create(review);
         feedService.addReview(review.getUserId(), review.getReviewId());
-        return reviewStorage.create(review);
+        return review;
     }
 
     public Review update(Review review) {
+        review = reviewStorage.update(review);
         feedService.updateReview(review.getUserId(), review.getReviewId());
-        return reviewStorage.update(review);
+        return review;
 
     }
 

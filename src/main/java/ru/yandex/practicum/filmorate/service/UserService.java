@@ -68,7 +68,6 @@ public class UserService {
         }
 
         userStorage.createFriend(user, userFriend);
-
         feedService.addFriend(userId, friendId);
     }
 
@@ -85,9 +84,9 @@ public class UserService {
             log.error("Не найден пользователь с id = {}", friendId);
             throw new NotFoundException("Не найден пользователь с указанным id");
         }
-
         userStorage.deleteFriend(userId, friendId);
         feedService.deleteFriend(userId, friendId);
+
     }
 
     public List<User> getFriendList(Long userId) {
