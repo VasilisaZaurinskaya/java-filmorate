@@ -67,3 +67,12 @@ databaseChangeLog:
             relativeToChangelogFile: true
             path: sql/reviews_like.sql
 
+  - changeSet:
+      id: add_feed
+      author: V_A_ZAUTINSKAYA
+      changes:
+        - sqlFile:
+            encoding: UTF-8
+            relativeToChangelogFile: true
+            path: sql/feed.sql
+
