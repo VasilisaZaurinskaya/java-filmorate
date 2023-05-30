@@ -80,3 +80,5 @@ ALTER TABLE genre_film
 
 ALTER TABLE genre_film
     ADD FOREIGN KEY (film_id) REFERENCES films (film_id);
+
+

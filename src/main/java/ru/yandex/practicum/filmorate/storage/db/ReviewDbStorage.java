@@ -35,24 +35,24 @@ public class ReviewDbStorage implements ReviewStorage {
         log.info("Получения списка отзывов для фильма id = {}, с количеством вывода count = {}", filmId, count);
 
         String sqlQuery = String.format(
-            "SELECT r.review_id, " +
-                "r.content, " +
-                "r.is_positive, " +
-                "r.user_id, " +
-                "r.film_id, " +
-                "COALESCE(c.positive_count - c.negative_count, 0) AS useful " +
-            "FROM reviews AS r " +
-            "LEFT OUTER JOIN (" +
-            "SELECT rl.review_id, " +
-                "SUM(case when rl.is_positive = true then 1 else 0 end)  AS positive_count, " +
-                "SUM(case when rl.is_positive = false then 1 else 0 end) AS negative_count " +
-            "FROM reviews_likes AS rl " +
-            "GROUP BY rl.review_id " +
-            ") AS c ON c.review_id = r.review_id " +
-            "%s " +
-            "ORDER BY useful DESC " +
-            "LIMIT ?",
-            filmId == null ? "" : "WHERE r.film_id = " + filmId
+                "SELECT r.review_id, " +
+                        "r.content, " +
+                        "r.is_positive, " +
+                        "r.user_id, " +
+                        "r.film_id, " +
+                        "COALESCE(c.positive_count - c.negative_count, 0) AS useful " +
+                        "FROM reviews AS r " +
+                        "LEFT OUTER JOIN (" +
+                        "SELECT rl.review_id, " +
+                        "SUM(case when rl.is_positive = true then 1 else 0 end)  AS positive_count, " +
+                        "SUM(case when rl.is_positive = false then 1 else 0 end) AS negative_count " +
+                        "FROM reviews_likes AS rl " +
+                        "GROUP BY rl.review_id " +
+                        ") AS c ON c.review_id = r.review_id " +
+                        "%s " +
+                        "ORDER BY useful DESC " +
+                        "LIMIT ?",
+                filmId == null ? "" : "WHERE r.film_id = " + filmId
         );
 
 
@@ -64,22 +64,22 @@ public class ReviewDbStorage implements ReviewStorage {
         log.info("Получения отзыва для фильма id = {}", id);
 
         String sqlQuery = (
-            "SELECT r.review_id, " +
-                "r.content, " +
-                "r.is_positive, " +
-                "r.user_id, " +
-                "r.film_id, " +
-                "COALESCE(c.positive_count - c.negative_count, 0) AS useful " +
-            "FROM reviews AS r " +
-            "LEFT OUTER JOIN (" +
-            "SELECT rl.review_id, " +
-                "SUM(case when rl.is_positive = true then 1 else 0 end)  AS positive_count, " +
-                "SUM(case when rl.is_positive = false then 1 else 0 end) AS negative_count " +
-            "FROM reviews_likes AS rl " +
-            "GROUP BY rl.review_id " +
-            ") AS c ON c.review_id = r.review_id " +
-            "WHERE r.review_id = ? " +
-            "ORDER BY useful DESC "
+                "SELECT r.review_id, " +
+                        "r.content, " +
+                        "r.is_positive, " +
+                        "r.user_id, " +
+                        "r.film_id, " +
+                        "COALESCE(c.positive_count - c.negative_count, 0) AS useful " +
+                        "FROM reviews AS r " +
+                        "LEFT OUTER JOIN (" +
+                        "SELECT rl.review_id, " +
+                        "SUM(case when rl.is_positive = true then 1 else 0 end)  AS positive_count, " +
+                        "SUM(case when rl.is_positive = false then 1 else 0 end) AS negative_count " +
+                        "FROM reviews_likes AS rl " +
+                        "GROUP BY rl.review_id " +
+                        ") AS c ON c.review_id = r.review_id " +
+                        "WHERE r.review_id = ? " +
+                        "ORDER BY useful DESC "
 
         );
 
@@ -123,10 +123,10 @@ public class ReviewDbStorage implements ReviewStorage {
         String sqlQuery = "UPDATE reviews SET content = ?, is_positive = ? WHERE review_id = ?";
 
         jdbcTemplate.update(
-            sqlQuery,
-            review.getContent(),
-            review.getIsPositive(),
-            review.getReviewId()
+                sqlQuery,
+                review.getContent(),
+                review.getIsPositive(),
+                review.getReviewId()
         );
 
         return findById(review.getReviewId());
@@ -179,13 +179,13 @@ public class ReviewDbStorage implements ReviewStorage {
 
     private Review mapToReview(ResultSet resultSet) throws SQLException {
         return Review
-            .builder()
-            .reviewId(resultSet.getLong("review_id"))
-            .isPositive(resultSet.getBoolean("is_positive"))
-            .content(resultSet.getString("content"))
-            .filmId(resultSet.getLong("film_id"))
-            .userId(resultSet.getLong("user_id"))
-            .useful(resultSet.getInt("useful"))
-            .build();
+                .builder()
+                .reviewId(resultSet.getLong("review_id"))
+                .isPositive(resultSet.getBoolean("is_positive"))
+                .content(resultSet.getString("content"))
+                .filmId(resultSet.getLong("film_id"))
+                .userId(resultSet.getLong("user_id"))
+                .useful(resultSet.getInt("useful"))
+                .build();
     }
 }

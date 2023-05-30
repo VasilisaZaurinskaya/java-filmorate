@@ -1,7 +1,7 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidateException;
@@ -15,16 +15,14 @@ import java.util.List;
 
 @Service
 @Slf4j
+@AllArgsConstructor
 public class UserService {
 
     private final UserStorage userStorage;
-    private final FilmStorage filmStorage;
+    private final FeedService feedService;
 
-    @Autowired
-    public UserService(UserStorage userStorage, FilmStorage filmStorage) {
-        this.userStorage = userStorage;
-        this.filmStorage = filmStorage;
-    }
+    private FilmStorage filmStorage;
+
 
     public User getUserById(Long id) {
         if (userStorage.getUserbyId(id) == null) {
@@ -54,13 +52,13 @@ public class UserService {
         return userStorage.getAllUsers();
     }
 
-    public void addFriend(Long id, Long friendId) {
+    public void addFriend(Long userId, Long friendId) {
 
-        User user = userStorage.getUserbyId(id);
+        User user = userStorage.getUserbyId(userId);
         User userFriend = userStorage.getUserbyId(friendId);
 
         if (user == null) {
-            log.error("Не найден пользователь с id = {}", id);
+            log.error("Не найден пользователь с id = {}", userId);
             throw new NotFoundException("Не найден пользователь с указанным id");
         }
         if (userFriend == null) {
@@ -69,10 +67,24 @@ public class UserService {
         }
 
         userStorage.createFriend(user, userFriend);
+        feedService.addFriend(userId, friendId);
     }
 
-    public void deleteFriend(Long id, Long friendId) {
-        userStorage.deleteFriend(id, friendId);
+    public void deleteFriend(Long userId, Long friendId) {
+
+        User user = userStorage.getUserbyId(userId);
+        User userFriend = userStorage.getUserbyId(friendId);
+
+        if (user == null) {
+            log.error("Не найден пользователь с id = {}", userId);
+            throw new NotFoundException("Не найден пользователь с указанным id");
+        }
+        if (userFriend == null) {
+            log.error("Не найден пользователь с id = {}", friendId);
+            throw new NotFoundException("Не найден пользователь с указанным id");
+        }
+        userStorage.deleteFriend(userId, friendId);
+        feedService.deleteFriend(userId, friendId);
 
     }
 
@@ -84,8 +96,8 @@ public class UserService {
         return userStorage.getMutualFriends(id, otherId);
     }
 
-    public void validateAddFriend(Long id, Long friendId) throws ValidateException {
-        if (id == null || friendId == null) {
+    public void validateAddFriend(Long userId, Long friendId) throws ValidateException {
+        if (userId == null || friendId == null) {
             log.error("Не указаны параметры для добавления в друзья");
             throw new ValidateException("id не может быть равен null");
         }
@@ -123,5 +135,8 @@ public class UserService {
         log.debug("Recommendations for films to watch from user with ID {}", userId);
         return filmStorage.getRecommendations(userId);
     }
+
+
+
 
 }
