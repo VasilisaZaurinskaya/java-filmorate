@@ -124,12 +124,14 @@ public class UserService {
         log.debug("Recommendations for films to watch from user with ID {}", userId);
         return filmStorage.getRecommendations(userId);
     }
-    public  void validateUser(Long id){
+
+    public void validateUser(Long id) {
         User user = getUserById(id);
-        if (user == null){
+        if (user == null) {
             throw new NotFoundException("Не найден пользователь с указанным id");
         }
     }
+
     public void deleteUser(Long id) {
         userStorage.deleteUser(id);
     }
