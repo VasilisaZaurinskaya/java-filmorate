@@ -9,4 +9,4 @@ CREATE TABLE IF NOT EXISTS feed
 
 );
 ALTER TABLE feed
-    ADD FOREIGN KEY (user_id) REFERENCES users (user_id);
+    ADD FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE ;
