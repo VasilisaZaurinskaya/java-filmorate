@@ -228,7 +228,6 @@ public class FilmDbStorage implements FilmStorage {
                     "FROM films AS f " +
                     "LEFT OUTER JOIN likes AS l ON l.film_id = f.film_id " +
                     "GROUP BY f.film_id " +
-                    "ORDER BY count(l.user_id) DESC , f.film_id DESC " +
                     "limit ?";
             likesRows = jdbcTemplate.queryForRowSet(sql, limit);
 
@@ -238,8 +237,6 @@ public class FilmDbStorage implements FilmStorage {
                     "LEFT OUTER JOIN likes AS l ON l.film_id = f.film_id " +
                     "LEFT JOIN  genre_film AS gf ON f.film_id = gf.film_id " +
                     "WHERE  gf.genre_id = ? AND year(f.release_date) = ? " +
-                    "GROUP BY f.film_id " +
-                    "ORDER BY count(l.user_id) DESC , f.film_id DESC " +
                     "limit ?";
             likesRows = jdbcTemplate.queryForRowSet(sql, genreId, year, limit);
 
@@ -250,7 +247,6 @@ public class FilmDbStorage implements FilmStorage {
                     "LEFT JOIN genre_film AS gf ON f.film_id = gf.film_id " +
                     "WHERE gf.genre_id = ? " +
                     "GROUP BY f.film_id " +
-                    "ORDER BY count(l.user_id) DESC , f.film_id DESC " +
                     "limit ?";
             likesRows = jdbcTemplate.queryForRowSet(sql, genreId, limit);
 
@@ -261,7 +257,6 @@ public class FilmDbStorage implements FilmStorage {
                     "LEFT JOIN genre_film AS gf ON f.film_id = gf.film_id " +
                     "WHERE year(f.release_date) = ? " +
                     "GROUP BY f.film_id " +
-                    "ORDER BY count(l.user_id) DESC , f.film_id DESC " +
                     "limit ?";
             likesRows = jdbcTemplate.queryForRowSet(sql, year, limit);
         }
