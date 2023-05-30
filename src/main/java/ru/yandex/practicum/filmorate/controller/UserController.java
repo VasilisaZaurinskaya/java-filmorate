@@ -84,6 +84,11 @@ public class UserController {
         return userService.getRecommendations(id);
     }
 
+    @DeleteMapping("/{id}")
+    public void deleteUser(@PathVariable Long id) {
+        userService.deleteUser(id);
+    }
+
     @GetMapping("/{userId}/feed")
     public @ResponseBody List<Feed> getFeed(@PathVariable Long userId) {
         User user = userService.getUserById(userId);

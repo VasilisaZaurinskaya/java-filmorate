@@ -55,30 +55,28 @@ CREATE TABLE IF NOT EXISTS genre_film
 );
 
 ALTER TABLE friends
-    ADD FOREIGN KEY (user_id) REFERENCES users (user_id);
+    ADD FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE;
 
 ALTER TABLE friends
-    ADD FOREIGN KEY (friend_id) REFERENCES users (user_id);
+    ADD FOREIGN KEY (friend_id) REFERENCES users (user_id) ON DELETE CASCADE;
 
 ALTER TABLE films
-    ADD FOREIGN KEY (genre_id) REFERENCES genres (genre_id);
+    ADD FOREIGN KEY (genre_id) REFERENCES genres (genre_id) ON DELETE CASCADE;
 
 ALTER TABLE films
-    ADD FOREIGN KEY (mpa_rating_id) REFERENCES mpa_rating (mpa_rating_id);
+    ADD FOREIGN KEY (mpa_rating_id) REFERENCES mpa_rating (mpa_rating_id) ON DELETE CASCADE;
 
 ALTER TABLE likes
-    ADD FOREIGN KEY (user_id) REFERENCES users (user_id);
+    ADD FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE;
 
 ALTER TABLE likes
-    ADD FOREIGN KEY (film_id) REFERENCES films (film_id);
+    ADD FOREIGN KEY (film_id) REFERENCES films (film_id) ON DELETE CASCADE;
 
 ALTER TABLE friends
-    ADD FOREIGN KEY (friendship) REFERENCES status_friendship (status_friendship_id);
+    ADD FOREIGN KEY (friendship) REFERENCES status_friendship (status_friendship_id) ON DELETE CASCADE;
 
 ALTER TABLE genre_film
-    ADD FOREIGN KEY (genre_id) REFERENCES genres (genre_id);
+    ADD FOREIGN KEY (genre_id) REFERENCES genres (genre_id) ON DELETE CASCADE;
 
 ALTER TABLE genre_film
-    ADD FOREIGN KEY (film_id) REFERENCES films (film_id);
-
-
+    ADD FOREIGN KEY (film_id) REFERENCES films (film_id) ON DELETE CASCADE;

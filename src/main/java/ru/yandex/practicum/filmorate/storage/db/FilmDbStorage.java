@@ -438,6 +438,12 @@ public class FilmDbStorage implements FilmStorage {
         return searchResults;
     }
 
+    @Override
+    public void deleteFilm(Long id) {
+        String sqlQuery = "DELETE FROM films WHERE film_id = ?";
+        jdbcTemplate.update(sqlQuery, id);
+    }
+
     private Film mapToFilm(ResultSet rs, int rowNum) throws SQLException {
         Long id = rs.getLong("film_id");
         String name = rs.getString("name");

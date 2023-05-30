@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS reviews
 );
 
 ALTER TABLE reviews
-    ADD FOREIGN KEY (user_id) REFERENCES users (user_id);
+    ADD FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE;
 
 ALTER TABLE reviews
-    ADD FOREIGN KEY (film_id) REFERENCES films (film_id);
+    ADD FOREIGN KEY (film_id) REFERENCES films (film_id) ON DELETE CASCADE;

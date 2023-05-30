@@ -48,4 +48,5 @@ public interface FilmStorage {
 
     List<Film> searchBy(String query, String by);
 
+    void deleteFilm(Long id);
 }

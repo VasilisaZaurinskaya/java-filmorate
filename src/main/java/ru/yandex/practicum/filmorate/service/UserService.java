@@ -89,6 +89,7 @@ public class UserService {
     }
 
     public List<User> getFriendList(Long userId) {
+        validateUser(userId);
         return userStorage.getFriendList(userId);
     }
 
@@ -136,7 +137,15 @@ public class UserService {
         return filmStorage.getRecommendations(userId);
     }
 
+    public void validateUser(Long id) {
+        User user = getUserById(id);
+        if (user == null) {
+            throw new NotFoundException("Не найден пользователь с указанным id");
+        }
+    }
 
-
+    public void deleteUser(Long id) {
+        userStorage.deleteUser(id);
+    }
 
 }
