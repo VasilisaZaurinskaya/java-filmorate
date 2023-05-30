@@ -118,7 +118,15 @@ public class UserDbStorage implements UserStorage {
     }
 
     @Override
+    public void deleteUser(Long id) {
+        String sqlQuery = "DELETE FROM users WHERE user_id = ?";
+        jdbcTemplate.update(sqlQuery, id);
+
+    }
+
+    @Override
     public List<User> getFriendList(Long userId) {
+
         String sql = "SELECT * FROM friends AS f LEFT JOIN users AS u ON f.friend_id = u.user_id " +
                 "WHERE f.user_id = ?";
         SqlRowSet friendRows = jdbcTemplate.queryForRowSet(sql, userId);
