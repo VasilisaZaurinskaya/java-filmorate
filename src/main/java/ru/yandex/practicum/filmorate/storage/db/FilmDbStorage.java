@@ -228,7 +228,8 @@ public class FilmDbStorage implements FilmStorage {
                     "FROM films AS f " +
                     "LEFT OUTER JOIN likes AS l ON l.film_id = f.film_id " +
                     "GROUP BY f.film_id " +
-                    "limit ?";
+                    "ORDER BY COUNT(l.film_id) DESC " +
+                    "LIMIT ?";
             likesRows = jdbcTemplate.queryForRowSet(sql, limit);
 
         } else if (genreId != null && year != null) {
