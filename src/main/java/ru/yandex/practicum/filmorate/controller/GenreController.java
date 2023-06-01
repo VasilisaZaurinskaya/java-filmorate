@@ -24,7 +24,7 @@ public class GenreController {
     }
 
     @GetMapping("/genres/{id}")
-    public Genre  getGenreById(@PathVariable Long id) {
+    public Genre getGenreById(@PathVariable Long id) {
         Genre genre = genreStorage.getGenreById(id);
         if (genre == null) throw new NotFoundException("Нет жанра с id = " + id);
         return genre;
