@@ -21,8 +21,7 @@ public class UserService {
 
     private final UserStorage userStorage;
     private final FeedService feedService;
-
-    private final    FilmStorage filmStorage;
+    private final FilmStorage filmStorage;
 
 
     public Optional <User> getUserById(Long id) {
