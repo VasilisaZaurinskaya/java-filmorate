@@ -1,7 +1,7 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.ValidateException;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -12,16 +12,13 @@ import java.util.Optional;
 
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("/films")
 @Slf4j
 public class FilmController {
     private final FilmService filmService;
 
 
-    @Autowired
-    public FilmController(FilmService filmService) {
-        this.filmService = filmService;
-    }
 
     @GetMapping("/{filmId}")
     public Film getFilmById(@PathVariable Long filmId) {

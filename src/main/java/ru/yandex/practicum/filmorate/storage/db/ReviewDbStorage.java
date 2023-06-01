@@ -1,7 +1,7 @@
 package ru.yandex.practicum.filmorate.storage.db;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -22,13 +22,11 @@ import java.util.Objects;
 @Component
 @Slf4j
 @Primary
+@AllArgsConstructor
 public class ReviewDbStorage implements ReviewStorage {
+    public static final String REVIEWS = "reviews";
     private final JdbcTemplate jdbcTemplate;
 
-    @Autowired
-    public ReviewDbStorage(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
 
     @Override
     public List<Review> findAll(Long filmId, Integer count) {
@@ -41,12 +39,12 @@ public class ReviewDbStorage implements ReviewStorage {
                         "r.user_id, " +
                         "r.film_id, " +
                         "COALESCE(c.positive_count - c.negative_count, 0) AS useful " +
-                        "FROM reviews AS r " +
+                        "FROM " + REVIEWS + " AS r " +
                         "LEFT OUTER JOIN (" +
                         "SELECT rl.review_id, " +
                         "SUM(case when rl.is_positive = true then 1 else 0 end)  AS positive_count, " +
                         "SUM(case when rl.is_positive = false then 1 else 0 end) AS negative_count " +
-                        "FROM reviews_likes AS rl " +
+                        "FROM " + REVIEWS + "_likes AS rl " +
                         "GROUP BY rl.review_id " +
                         ") AS c ON c.review_id = r.review_id " +
                         "%s " +
@@ -70,12 +68,12 @@ public class ReviewDbStorage implements ReviewStorage {
                         "r.user_id, " +
                         "r.film_id, " +
                         "COALESCE(c.positive_count - c.negative_count, 0) AS useful " +
-                        "FROM reviews AS r " +
+                        "FROM " + REVIEWS + " AS r " +
                         "LEFT OUTER JOIN (" +
                         "SELECT rl.review_id, " +
                         "SUM(case when rl.is_positive = true then 1 else 0 end)  AS positive_count, " +
                         "SUM(case when rl.is_positive = false then 1 else 0 end) AS negative_count " +
-                        "FROM reviews_likes AS rl " +
+                        "FROM " + REVIEWS + "_likes AS rl " +
                         "GROUP BY rl.review_id " +
                         ") AS c ON c.review_id = r.review_id " +
                         "WHERE r.review_id = ? " +
@@ -96,7 +94,7 @@ public class ReviewDbStorage implements ReviewStorage {
         log.info("Создание отзыва: {}", review);
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        String sqlQuery = "INSERT INTO reviews (content, is_positive, user_id, film_id, useful) VALUES (?, ?, ?, ?, ?)";
+        String sqlQuery = "INSERT INTO " + REVIEWS + " (content, is_positive, user_id, film_id, useful) VALUES (?, ?, ?, ?, ?)";
 
         jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection.prepareStatement(sqlQuery, Statement.RETURN_GENERATED_KEYS);
@@ -120,7 +118,7 @@ public class ReviewDbStorage implements ReviewStorage {
     public Review update(Review review) {
         log.info("Обновление отзыва с id = {}", review.getReviewId());
 
-        String sqlQuery = "UPDATE reviews SET content = ?, is_positive = ? WHERE review_id = ?";
+        String sqlQuery = "UPDATE " + REVIEWS + " SET content = ?, is_positive = ? WHERE review_id = ?";
 
         jdbcTemplate.update(
                 sqlQuery,
@@ -136,7 +134,7 @@ public class ReviewDbStorage implements ReviewStorage {
     public String delete(Long id) {
         log.info("Удаление отзыва с id = {}", id);
 
-        String sqlQuery = "DELETE FROM reviews WHERE review_id = ?";
+        String sqlQuery = "DELETE FROM " + REVIEWS + " WHERE review_id = ?";
 
         return jdbcTemplate.update(sqlQuery, id) > 0 ? "Отзыв удален" : "Не чего удалять!";
     }
@@ -144,7 +142,7 @@ public class ReviewDbStorage implements ReviewStorage {
     @Override
     public void addLike(Long reviewId, Long userId) {
         log.info("Добавление лайка отзыву с id = {}, пользователем с id = {}", reviewId, userId);
-        String sqlQuery = "INSERT INTO reviews_likes (review_id, user_id, is_positive) VALUES (?, ?, true)";
+        String sqlQuery = "INSERT INTO " + REVIEWS + "_likes (review_id, user_id, is_positive) VALUES (?, ?, true)";
 
         jdbcTemplate.update(sqlQuery, reviewId, userId);
     }
@@ -152,7 +150,7 @@ public class ReviewDbStorage implements ReviewStorage {
     @Override
     public void deleteLike(Long reviewId, Long userId) {
         log.info("Удаление лайка отзыву с id = {}, пользователем с id = {}", reviewId, userId);
-        String sqlQuery = "DELETE FROM reviews_likes WHERE review_id = ? AND user_id = ? AND is_positive = true";
+        String sqlQuery = "DELETE FROM " + REVIEWS + "_likes WHERE review_id = ? AND user_id = ? AND is_positive = true";
 
         jdbcTemplate.update(sqlQuery, reviewId, userId);
     }
@@ -160,7 +158,7 @@ public class ReviewDbStorage implements ReviewStorage {
     @Override
     public void addDislike(Long reviewId, Long userId) {
         log.info("Добавление дизлайка отзыву с id = {}, пользователем с id = {}", reviewId, userId);
-        String sqlQuery = "INSERT INTO reviews_likes (review_id, user_id, is_positive) VALUES (?, ?, false)";
+        String sqlQuery = "INSERT INTO " + REVIEWS + "_likes (review_id, user_id, is_positive) VALUES (?, ?, false)";
 
         jdbcTemplate.update(sqlQuery, reviewId, userId);
     }
@@ -168,7 +166,7 @@ public class ReviewDbStorage implements ReviewStorage {
     @Override
     public void deleteDislike(Long reviewId, Long userId) {
         log.info("Удаление дизлайка отзыву с id = {}, пользователем с id = {}", reviewId, userId);
-        String sqlQuery = "DELETE FROM reviews_likes WHERE review_id = ? AND user_id = ? AND is_positive = false";
+        String sqlQuery = "DELETE FROM " + REVIEWS + "_likes WHERE review_id = ? AND user_id = ? AND is_positive = false";
 
         jdbcTemplate.update(sqlQuery, reviewId, userId);
     }

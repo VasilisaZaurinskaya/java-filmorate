@@ -12,6 +12,7 @@ import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -21,15 +22,15 @@ public class UserService {
     private final UserStorage userStorage;
     private final FeedService feedService;
 
-    private FilmStorage filmStorage;
+    private final    FilmStorage filmStorage;
 
 
-    public User getUserById(Long id) {
+    public Optional <User> getUserById(Long id) {
         if (userStorage.getUserbyId(id) == null) {
             log.error("Пользователь не может быть равен null");
             throw new NotFoundException("Пользователь не может быть равен null");
         } else {
-            return userStorage.getUserbyId(id);
+            return Optional.ofNullable(userStorage.getUserbyId(id));
         }
     }
 
@@ -138,7 +139,7 @@ public class UserService {
     }
 
     public void validateUser(Long id) {
-        User user = getUserById(id);
+        User user = getUserById(id).get();
         if (user == null) {
             throw new NotFoundException("Не найден пользователь с указанным id");
         }

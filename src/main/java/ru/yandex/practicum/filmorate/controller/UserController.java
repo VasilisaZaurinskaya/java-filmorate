@@ -25,7 +25,7 @@ public class UserController {
 
     @GetMapping("/{id}")
     public @ResponseBody User getUserById(@PathVariable Long id) {
-        return userService.getUserById(id);
+        return userService.getUserById(id).get();
     }
 
     @PostMapping
@@ -91,7 +91,7 @@ public class UserController {
 
     @GetMapping("/{userId}/feed")
     public @ResponseBody List<Feed> getFeed(@PathVariable Long userId) {
-        User user = userService.getUserById(userId);
+        User user = userService.getUserById(userId).get();
 
         if (user == null) {
             log.error("Не найден пользователь с id = {}", userId);

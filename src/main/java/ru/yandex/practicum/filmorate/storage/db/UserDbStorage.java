@@ -18,6 +18,8 @@ import java.util.*;
 @Primary
 @AllArgsConstructor
 public class UserDbStorage implements UserStorage {
+    public static final String USERS = "users";
+    public static final String FRIENDS = "friends";
     private final JdbcTemplate jdbcTemplate;
 
     @Override
@@ -30,7 +32,7 @@ public class UserDbStorage implements UserStorage {
         values.put("birthday", user.getBirthday());
 
         SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
-                .withTableName("users")
+                .withTableName(USERS)
                 .usingGeneratedKeyColumns("user_id");
 
         Long userId = simpleJdbcInsert.executeAndReturnKey(values).longValue();
@@ -43,7 +45,7 @@ public class UserDbStorage implements UserStorage {
         if (getUserbyId(user.getId()) == null)
             throw new NotFoundException("Пользователь с идентификатором " + user.getId() + " не найден.");
         jdbcTemplate.update(
-                "UPDATE users SET " +
+                "UPDATE " + USERS + " SET " +
                         "name = ?, login = ?, email = ?, birthday = ? " +
                         "where user_id = ?",
                 user.getName(),
@@ -57,7 +59,7 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public List<User> getAllUsers() {
-        SqlRowSet userRows = jdbcTemplate.queryForRowSet("SELECT * FROM users");
+        SqlRowSet userRows = jdbcTemplate.queryForRowSet("SELECT * FROM " + USERS);
         ArrayList<User> users = new ArrayList<User>();
         while (userRows.next()) {
             User user = new User();
@@ -76,7 +78,7 @@ public class UserDbStorage implements UserStorage {
     @Override
     public User getUserbyId(Long id) {
 
-        SqlRowSet userRows = jdbcTemplate.queryForRowSet("SELECT * FROM users WHERE user_id = ?", id);
+        SqlRowSet userRows = jdbcTemplate.queryForRowSet("SELECT * FROM " + USERS + " WHERE user_id = ?", id);
 
         if (userRows.next()) {
 
@@ -98,13 +100,13 @@ public class UserDbStorage implements UserStorage {
 
 
     public List<Map<String, Object>> getAllFriends() {
-        SqlRowSet friendRows = jdbcTemplate.queryForRowSet("SELECT * FROM friends ORDER BY user_id");
+        SqlRowSet friendRows = jdbcTemplate.queryForRowSet("SELECT * FROM " + FRIENDS + " ORDER BY user_id");
         ArrayList<Map<String, Object>> friends = new ArrayList<>();
         while (friendRows.next()) {
             Map<String, Object> friend = new HashMap<>();
             friend.put("user_id", friendRows.getLong("user_id"));
             friend.put("friend_id", friendRows.getLong("friend_id"));
-            friend.put("friendship_status", friendRows.getString("friendship"));
+            friend.put(FRIENDS + "hip_status", friendRows.getString(FRIENDS + "hip"));
             friends.add(friend);
 
 
@@ -115,7 +117,7 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public void deleteUser(Long id) {
-        String sqlQuery = "DELETE FROM users WHERE user_id = ?";
+        String sqlQuery = "DELETE FROM " + USERS + " WHERE user_id = ?";
         jdbcTemplate.update(sqlQuery, id);
 
     }
@@ -123,7 +125,7 @@ public class UserDbStorage implements UserStorage {
     @Override
     public List<User> getFriendList(Long userId) {
 
-        String sql = "SELECT * FROM friends AS f LEFT JOIN users AS u ON f.friend_id = u.user_id " +
+        String sql = "SELECT * FROM " + FRIENDS + " AS f LEFT JOIN " + USERS + " AS u ON f.friend_id = u.user_id " +
                 "WHERE f.user_id = ?";
         SqlRowSet friendRows = jdbcTemplate.queryForRowSet(sql, userId);
         ArrayList<User> friends = new ArrayList<User>();
@@ -137,7 +139,7 @@ public class UserDbStorage implements UserStorage {
 
             Friend friend = new Friend();
             friend.setFriend(user);
-            friend.setFriendshipStatus(friendRows.getString("friendship"));
+            friend.setFriendshipStatus(friendRows.getString(FRIENDS + "hip"));
 
             friends.add(user);
         }
@@ -151,23 +153,23 @@ public class UserDbStorage implements UserStorage {
         Map<String, Object> values = new HashMap<>();
         values.put("friend_id", friend.getId());
         values.put("user_id", user.getId());
-        values.put("friendship_status", "friend");
+        values.put(FRIENDS + "hip_status", "friend");
 
         SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
-                .withTableName("friends");
+                .withTableName(FRIENDS);
         simpleJdbcInsert.execute(values);
     }
 
     @Override
     public void deleteFriend(Long id, Long friendId) {
-        String sql = "DELETE FROM friends WHERE friend_id = ? AND user_id = ? ";
+        String sql = "DELETE FROM " + FRIENDS + " WHERE friend_id = ? AND user_id = ? ";
         jdbcTemplate.update(sql, friendId, id);
     }
 
     @Override
     public List<User> getMutualFriends(Long id, Long otherId) {
-        String sql = "SELECT * FROM users WHERE user_id IN (SELECT f1.friend_id FROM friends " +
-                "AS f1 INNER JOIN friends AS f2 ON f1.friend_id = f2.friend_id WHERE f1.user_id = ? " +
+        String sql = "SELECT * FROM " + USERS + " WHERE user_id IN (SELECT f1.friend_id FROM " + FRIENDS + " " +
+                "AS f1 INNER JOIN " + FRIENDS + " AS f2 ON f1.friend_id = f2.friend_id WHERE f1.user_id = ? " +
                 "AND f2.user_id = ?);";
         SqlRowSet friendRows = jdbcTemplate.queryForRowSet(sql, id, otherId);
         ArrayList<User> mutualFriends = new ArrayList<User>();

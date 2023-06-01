@@ -24,27 +24,27 @@ public class DirectorController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Director>> findAll() {
-        return ResponseEntity.ok(directorService.findAll());
+    public List<Director> findAll() {
+        return directorService.findAll();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Director> findRatingById(@PathVariable Long id) {
-        return ResponseEntity.ok(directorService.findById(id));
+    public Director findRatingById(@PathVariable Long id) {
+        return directorService.findById(id);
     }
 
     @PostMapping
-    public ResponseEntity<Director> create(@Valid @RequestBody Director director) {
-        return ResponseEntity.ok(directorService.create(director));
+    public Director create(@Valid @RequestBody Director director) {
+        return directorService.create(director);
     }
 
     @PutMapping
-    public ResponseEntity<Director> update(@Valid @RequestBody Director director) {
-        return ResponseEntity.ok(directorService.update(director));
+    public Director update(@Valid @RequestBody Director director) {
+        return directorService.update(director);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> delete(@PathVariable Long id) {
-        return ResponseEntity.ok(directorService.delete(id));
+    public String delete(@PathVariable Long id) {
+        return directorService.delete(id);
     }
 }

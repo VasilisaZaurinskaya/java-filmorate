@@ -3,7 +3,9 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.model.EventType;
 import ru.yandex.practicum.filmorate.model.Feed;
+import ru.yandex.practicum.filmorate.model.Operation;
 import ru.yandex.practicum.filmorate.storage.FeedsStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
@@ -15,14 +17,6 @@ import java.util.List;
 @Slf4j
 @AllArgsConstructor
 public class FeedService {
-    public static final String FRIEND = "FRIEND";
-    public static final String LIKE = "LIKE";
-    public static final String REVIEW = "REVIEW";
-
-    public static final String ADD = "ADD";
-    public static final String REMOVE = "REMOVE";
-
-    public static final String UPDATE = "UPDATE";
 
     private final FeedsStorage feedsStorage;
     private final UserStorage userStorage;
@@ -33,8 +27,8 @@ public class FeedService {
         Feed feed = Feed.builder()
                 .userId(userId)
                 .entityId(friendId)
-                .eventType(FRIEND)
-                .operation(ADD)
+                .eventType(EventType.FRIEND.name())
+                .operation(Operation.ADD.name())
                 .timestamp(new Date().getTime())
                 .build();
 
@@ -48,8 +42,8 @@ public class FeedService {
         Feed feed = Feed.builder()
                 .userId(userId)
                 .entityId(friendId)
-                .eventType(FRIEND)
-                .operation(REMOVE)
+                .eventType(EventType.FRIEND.name())
+                .operation(Operation.REMOVE.name())
                 .timestamp(new Date().getTime())
                 .build();
 
@@ -61,8 +55,8 @@ public class FeedService {
         Feed feed = Feed.builder()
                 .userId(userId)
                 .entityId(filmId)
-                .eventType(LIKE)
-                .operation(ADD)
+                .eventType(EventType.LIKE.name())
+                .operation(Operation.ADD.name())
                 .timestamp(new Date().getTime())
                 .build();
 
@@ -73,8 +67,8 @@ public class FeedService {
         log.info("Пользователь {} удалил лайк у фильма {}", userId, filmId);
         Feed feed = Feed.builder()
                 .userId(userId)
-                .eventType(LIKE)
-                .operation(REMOVE)
+                .eventType(EventType.LIKE.name())
+                .operation(Operation.REMOVE.name())
                 .entityId(filmId)
                 .timestamp(new Date().getTime())
                 .build();
@@ -87,8 +81,8 @@ public class FeedService {
         Feed feed = Feed.builder()
                 .userId(userId)
                 .entityId(reviewId)
-                .eventType(REVIEW)
-                .operation(ADD)
+                .eventType(EventType.REVIEW.name())
+                .operation(Operation.ADD.name())
                 .timestamp(new Date().getTime())
                 .build();
 
@@ -101,8 +95,8 @@ public class FeedService {
         Feed feed = Feed.builder()
                 .userId(userId)
                 .entityId(reviewId)
-                .eventType(REVIEW)
-                .operation(UPDATE)
+                .eventType(EventType.REVIEW.name())
+                .operation(Operation.UPDATE.name())
                 .timestamp(new Date().getTime())
                 .build();
 
@@ -114,8 +108,8 @@ public class FeedService {
         Feed feed = Feed.builder()
                 .userId(userId)
                 .entityId(reviewId)
-                .eventType(REVIEW)
-                .operation(REMOVE)
+                .eventType(EventType.REVIEW.name())
+                .operation(Operation.REMOVE.name())
                 .timestamp(new Date().getTime())
                 .build();
 

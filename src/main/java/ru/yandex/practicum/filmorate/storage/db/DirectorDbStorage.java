@@ -1,7 +1,7 @@
 package ru.yandex.practicum.filmorate.storage.db;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -24,17 +24,16 @@ import java.util.StringJoiner;
 @Component
 @Slf4j
 @Primary
+@AllArgsConstructor
 public class DirectorDbStorage implements DirectorStorage {
+    public static final String DIRECTORS = "directors";
+    public static final String FILMS_DIRECTOR = "films_director";
     private final JdbcTemplate jdbcTemplate;
 
-    @Autowired
-    public DirectorDbStorage(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
 
     @Override
     public List<Director> findAll() {
-        String sqlQuery = "SELECT * FROM directors";
+        String sqlQuery = "SELECT * FROM " + DIRECTORS;
         log.info("Получение списка всех режиссеров");
 
         return jdbcTemplate.query(sqlQuery, this::mapRowToDirector);
@@ -42,7 +41,7 @@ public class DirectorDbStorage implements DirectorStorage {
 
     @Override
     public Director findById(Long id) {
-        String sqlQuery = "SELECT * FROM directors WHERE director_id = ?";
+        String sqlQuery = "SELECT * FROM " + DIRECTORS + " WHERE director_id = ?";
         log.info("Получение списка режиссера с id = {}", id);
 
         try {
@@ -55,7 +54,7 @@ public class DirectorDbStorage implements DirectorStorage {
     @Override
     public Director create(Director director) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        String sqlQuery = "INSERT INTO directors (name) VALUES (?)";
+        String sqlQuery = "INSERT INTO " + DIRECTORS + " (name) VALUES (?)";
 
         log.info("Создание режиссера: {}", director);
 
@@ -80,7 +79,7 @@ public class DirectorDbStorage implements DirectorStorage {
         log.info("Обновление режиссера с id = {}", director.getId());
         findById(director.getId());
 
-        String sqlQuery = "UPDATE directors SET name = ? WHERE director_id = ?";
+        String sqlQuery = "UPDATE " + DIRECTORS + " SET name = ? WHERE director_id = ?";
         jdbcTemplate.update(sqlQuery, director.getName(), director.getId());
 
         return director;
@@ -89,8 +88,8 @@ public class DirectorDbStorage implements DirectorStorage {
     @Override
     public String delete(Long directorId) {
         log.info("Удаление режиссера с id = {}", directorId);
-        String sqlQuery = "DELETE FROM films_director WHERE director_id = ?; " +
-            "DELETE FROM directors WHERE director_id = " + directorId;
+        String sqlQuery = "DELETE FROM " + FILMS_DIRECTOR + " WHERE director_id = ?; " +
+                "DELETE FROM " + DIRECTORS + " WHERE director_id = " + directorId;
 
         return jdbcTemplate.update(sqlQuery, directorId) > 0 ? "Режиссер удален" : "Ошибка при удалении";
     }
@@ -99,7 +98,7 @@ public class DirectorDbStorage implements DirectorStorage {
     public void addFilm(LinkedHashSet<Director> directors, Long filmId) {
         log.info("Добавление режиссеров фильму с id = {}", filmId);
         StringJoiner stringJoiner = new StringJoiner(" ");
-        stringJoiner.add("INSERT INTO films_director (film_id, director_id) VALUES");
+        stringJoiner.add("INSERT INTO " + FILMS_DIRECTOR + " (film_id, director_id) VALUES");
 
         directors.forEach(d -> stringJoiner.add(String.format("(%s, %s),", filmId, d.getId())));
 
@@ -110,7 +109,7 @@ public class DirectorDbStorage implements DirectorStorage {
 
     @Override
     public void deleteFilm(Long filmId) {
-        String sqlQuery = "DELETE FROM films_director WHERE film_id = ?";
+        String sqlQuery = "DELETE FROM " + FILMS_DIRECTOR + " WHERE film_id = ?";
 
         jdbcTemplate.update(sqlQuery, filmId);
     }
@@ -118,8 +117,8 @@ public class DirectorDbStorage implements DirectorStorage {
     @Override
     public LinkedHashSet<Director>  getDirectorsByFilm(Long filmId) {
         log.info("Получение режиссеров фильма с id = {}", filmId);
-        String sqlQuery = "SELECT d.* FROM directors AS d " +
-            "LEFT OUTER JOIN films_director AS fd ON fd.director_id = d.director_id " +
+        String sqlQuery = "SELECT d.* FROM " + DIRECTORS + " AS d " +
+                "LEFT OUTER JOIN " + FILMS_DIRECTOR + " AS fd ON fd.director_id = d.director_id " +
             "WHERE fd.film_id = ?";
 
         return new LinkedHashSet<>(jdbcTemplate.query(sqlQuery, this::mapRowToDirector, filmId));

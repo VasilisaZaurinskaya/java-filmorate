@@ -18,16 +18,17 @@ import java.util.List;
 @Primary
 @AllArgsConstructor
 public class MpaDbStorage implements MpaStorage {
+    public static final String MPA_RATING = "mpa_rating";
     private final JdbcTemplate jdbcTemplate;
 
 
     @Override
     public List<Mpa> getAllMpa() {
-        SqlRowSet mpaRows = jdbcTemplate.queryForRowSet("SELECT * FROM mpa_rating");
+        SqlRowSet mpaRows = jdbcTemplate.queryForRowSet("SELECT * FROM " + MPA_RATING);
         ArrayList<Mpa> mpa = new ArrayList<Mpa>();
         while (mpaRows.next()) {
             Mpa mpa1 = new Mpa();
-            mpa1.setId(mpaRows.getInt("mpa_rating_id"));
+            mpa1.setId(mpaRows.getInt(MPA_RATING + "_id"));
             mpa1.setName(mpaRows.getString("name"));
             mpa1.setDescription(mpaRows.getString("description"));
             mpa.add(mpa1);
@@ -38,12 +39,12 @@ public class MpaDbStorage implements MpaStorage {
 
     @Override
     public Mpa getMpaById(Integer id) {
-        SqlRowSet mpaRows = jdbcTemplate.queryForRowSet("SELECT * FROM mpa_rating WHERE mpa_rating_id = ?", id);
+        SqlRowSet mpaRows = jdbcTemplate.queryForRowSet("SELECT * FROM " + MPA_RATING + " WHERE mpa_rating_id = ?", id);
 
         if (mpaRows.next()) {
 
             Mpa mpa1 = new Mpa();
-            mpa1.setId(mpaRows.getInt("mpa_rating_id"));
+            mpa1.setId(mpaRows.getInt(MPA_RATING + "_id"));
             mpa1.setName(mpaRows.getString("name"));
             mpa1.setDescription(mpaRows.getString("description"));
 

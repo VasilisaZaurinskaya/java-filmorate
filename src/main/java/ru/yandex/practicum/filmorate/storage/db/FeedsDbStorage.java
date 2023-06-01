@@ -20,6 +20,7 @@ import java.util.Map;
 @Primary
 @AllArgsConstructor
 public class FeedsDbStorage implements FeedsStorage {
+    public static final String FEED = "feed";
     private final JdbcTemplate jdbcTemplate;
 
 
@@ -33,7 +34,7 @@ public class FeedsDbStorage implements FeedsStorage {
         values.put("timestamp", feed.getTimestamp());
 
         SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
-                .withTableName("feed")
+                .withTableName(FEED)
                 .usingGeneratedKeyColumns("event_id");
 
         simpleJdbcInsert.executeAndReturnKey(values).longValue();
@@ -42,7 +43,7 @@ public class FeedsDbStorage implements FeedsStorage {
 
     @Override
     public List<Feed> getFeedByUserId(Long userId) {
-        SqlRowSet feedRows = jdbcTemplate.queryForRowSet("select * from feed where user_id = ?", userId);
+        SqlRowSet feedRows = jdbcTemplate.queryForRowSet("select * from " + FEED + " where user_id = ?", userId);
         ArrayList<Feed> feeds = new ArrayList<Feed>();
         while (feedRows.next()) {
 
