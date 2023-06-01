@@ -24,7 +24,7 @@ public class UserService {
     private final FilmStorage filmStorage;
 
 
-    public Optional <User> getUserById(Long id) {
+    public Optional<User> getUserById(Long id) {
         if (userStorage.getUserbyId(id) == null) {
             log.error("Пользователь не может быть равен null");
             throw new NotFoundException("Пользователь не может быть равен null");
