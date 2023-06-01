@@ -15,8 +15,6 @@ import java.util.List;
 public class DirectorService {
     private final DirectorDbStorage directorStorage;
 
-
-
     public List<Director> findAll() {
         return directorStorage.findAll();
     }
@@ -24,7 +22,7 @@ public class DirectorService {
     public Director findById(Long id) {
         if (id < 0) {
             log.error("id не может быть отрицательным");
-            throw new NotFoundException("");
+            throw new NotFoundException("id не может быть отрицательным");
         }
 
         return directorStorage.findById(id);

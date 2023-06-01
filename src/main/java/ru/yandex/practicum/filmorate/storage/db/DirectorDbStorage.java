@@ -115,11 +115,11 @@ public class DirectorDbStorage implements DirectorStorage {
     }
 
     @Override
-    public LinkedHashSet<Director>  getDirectorsByFilm(Long filmId) {
+    public LinkedHashSet<Director> getDirectorsByFilm(Long filmId) {
         log.info("Получение режиссеров фильма с id = {}", filmId);
         String sqlQuery = "SELECT d.* FROM " + DIRECTORS + " AS d " +
                 "LEFT OUTER JOIN " + FILMS_DIRECTOR + " AS fd ON fd.director_id = d.director_id " +
-            "WHERE fd.film_id = ?";
+                "WHERE fd.film_id = ?";
 
         return new LinkedHashSet<>(jdbcTemplate.query(sqlQuery, this::mapRowToDirector, filmId));
     }
