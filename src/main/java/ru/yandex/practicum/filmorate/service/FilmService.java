@@ -1,9 +1,8 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.controller.FilmController;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidateException;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -13,20 +12,18 @@ import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
+@AllArgsConstructor
 public class FilmService {
     private final FilmStorage filmStorage;
     private final UserStorage userStorage;
+    private final FeedService feedService;
 
-    @Autowired
-    public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
-        this.filmStorage = filmStorage;
-        this.userStorage = userStorage;
-    }
 
-    public Film createFilm(Film film, FilmController filmController) {
+    public Film createFilm(Film film) {
         validateNewFilm(film);
         return filmStorage.createFilm(film);
     }
@@ -38,7 +35,6 @@ public class FilmService {
 
     public List<Film> getAllFilms() {
         return filmStorage.getAllFilms();
-
     }
 
     public Film getFilmById(Long filmId) {
@@ -65,6 +61,7 @@ public class FilmService {
         }
 
         filmStorage.addLike(filmId, userId);
+        feedService.addLike(userId, filmId);
     }
 
     public void removeLike(Long userId, Long filmId) {
@@ -82,10 +79,23 @@ public class FilmService {
         }
 
         filmStorage.removeLike(filmId, userId);
+        feedService.removeLike(userId, filmId);
     }
 
-    public List<Film> getMostPopularFilms(Integer count) {
-        return filmStorage.getMostPopularFilms(count);
+    public List<Film> getMostPopularFilms(Integer count, Integer genreId, Integer year) {
+        return filmStorage.getMostPopularFilms(count, genreId, year);
+    }
+
+    public List<Film> getCommonFilms(Integer userId, Integer friendId) {
+        return filmStorage.getCommonFilms(userId, friendId);
+    }
+
+    public List<Film> findFilmsByDirector(Long id, Optional<String> sortBy) {
+        if (id < 0) {
+            throw new NotFoundException("id не может быть отрицательным");
+        }
+
+        return filmStorage.findFilmsByDirector(id, sortBy);
     }
 
     public void validateUserAndFilm(Long userId, Long filmId) {
@@ -93,6 +103,10 @@ public class FilmService {
             log.error("Фильм или пользователь не указаны");
             throw new ValidateException("Нехватка данных ");
         }
+    }
+
+    public List<Film> getSearchResults(String query, String by) {
+        return filmStorage.searchBy(query, by);
     }
 
     public void validateNewFilm(Film film) throws ValidateException {
@@ -118,4 +132,7 @@ public class FilmService {
     }
 
 
+    public void deleteFilm(Long id) {
+        filmStorage.deleteFilm(id);
+    }
 }

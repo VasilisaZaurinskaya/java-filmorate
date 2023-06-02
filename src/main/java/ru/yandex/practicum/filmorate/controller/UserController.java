@@ -1,30 +1,31 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidateException;
 import lombok.extern.slf4j.Slf4j;
+import ru.yandex.practicum.filmorate.model.Feed;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.service.FeedService;
 import ru.yandex.practicum.filmorate.service.UserService;
 
 import java.util.List;
 
-
 @RestController
 @RequestMapping("/users")
 @Slf4j
+@AllArgsConstructor
 public class UserController {
 
     private final UserService userService;
+    private final FeedService feedService;
 
-    @Autowired
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
 
     @GetMapping("/{id}")
     public @ResponseBody User getUserById(@PathVariable Long id) {
-        return userService.getUserById(id);
+        return userService.getUserById(id).get();
     }
 
     @PostMapping
@@ -71,11 +72,34 @@ public class UserController {
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")
-    public @ResponseBody List<User> getMitualFriends(
+    public @ResponseBody List<User> getMutualFriends(
             @PathVariable Long id,
             @PathVariable Long otherId
     ) {
-        return userService.getMitualFriends(id, otherId);
+        return userService.getMutualFriends(id, otherId);
     }
+
+    @GetMapping("/{id}/recommendations")
+    public List<Film> getRecommendations(@PathVariable Integer id) {
+        return userService.getRecommendations(id);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteUser(@PathVariable Long id) {
+        userService.deleteUser(id);
+    }
+
+    @GetMapping("/{userId}/feed")
+    public @ResponseBody List<Feed> getFeed(@PathVariable Long userId) {
+        User user = userService.getUserById(userId).get();
+
+        if (user == null) {
+            log.error("Не найден пользователь с id = {}", userId);
+            throw new NotFoundException("Не найден пользователь с указанным id");
+        }
+
+        return feedService.getFeedByUserId(userId);
+    }
+
 
 }

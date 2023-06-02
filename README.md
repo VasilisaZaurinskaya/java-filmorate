@@ -1,4 +1,15 @@
 # java-filmorate
 Template repository for Filmorate project.
 
-![ERD](https://github.com/VasilisaZautinskaya/java-filmorate/blob/add-database/Untitled.png)
+![ERD](https://github.com/VasilisaZautinskaya/java-filmorate/blob/develop/Untitled.png)
+
+Реализован функционал:
+
+1.Функциональность  «Отзывы»;
+2.Функциональность  «Поиск»;
+3.Функциональность  «Общие фильмы»;
+4.Функциональность «Рекомендации»;
+5.Функциональность «Лента событий»;
+6.Удаление фильмов и пользователей;
+7.Добавление режиссёров в фильмы;
+8.Вывод самых популярных фильмов по жанру и годам;
